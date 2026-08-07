@@ -2158,6 +2158,7 @@
                 if (!s.guessed) s.guessed = emptyMap(s.questionIds, false);
                 var filter = state.reviewFilter || 'all';
                 var result = scoreExam(s);
+                var wrongIds = result.details.filter(function (d) { return !d.correct; }).map(function (d) { return d.id; });
                 var failingNames = result.subjectResults.filter(function (r) { return r.failing; }).map(function (r) { return r.subject; });
 
                 var bannerHtml = isWrongMode ? '' : (result.pass
@@ -2230,6 +2231,13 @@
                 var solveTimeHtml = (mode !== 'wrong' && s.startedAt && s.submittedAt)
                     ? '<div class="solve-time-line">풀이 시간 ' + fmtDuration(s.submittedAt - s.startedAt) + '</div>' : '';
 
+                var retryActionsHtml = (!isWrongMode && wrongIds.length > 0)
+                    ? '<div class="action-row two-col">' +
+                        '<button type="button" class="btn btn-primary" id="retryBtn">다시 풀기</button>' +
+                        '<button type="button" class="btn btn-outline" id="retryWrongBtn">오답 문제 다시 풀기</button>' +
+                        '</div>'
+                    : '<button type="button" class="btn btn-primary full" id="retryBtn">다시 풀기</button>';
+
                 app.innerHTML = headerHtml(title) +
                     '<main class="container">' +
                     bannerHtml +
@@ -2244,7 +2252,7 @@
                     '<button type="button" class="tab-btn ' + (filter === 'guess' ? 'active' : '') + '" data-filter="guess">찍은 문제만 보기</button>' +
                     '</div>' +
                     '<div class="review-list">' + (reviewHtml || '<p class="lead">해당하는 문항이 없습니다.</p>') + '</div>' +
-                    '<button type="button" class="btn btn-primary full" id="retryBtn">다시 풀기</button>' +
+                    retryActionsHtml +
                     '</main>';
 
                 on('#homeBtn', 'click', function () { nav('home'); });
@@ -2276,6 +2284,12 @@
                             saveState(KEY_WRONG, createWrongSession(collectWrongDetails().map(function (d) { return d.id; })));
                             nav('wrongSolve');
                         }
+                    });
+                });
+                on('#retryWrongBtn', 'click', function () {
+                    confirmModal('오답 문제만 다시 풉니다. 진행 중인 오답 다시 풀기 기록이 있다면 새로 대체됩니다. 계속할까요?', function () {
+                        saveState(KEY_WRONG, createWrongSession(wrongIds));
+                        nav('wrongSolve');
                     });
                 });
             }
