@@ -2103,14 +2103,31 @@
                 var ids = details.map(function (d) { return d.id; });
                 var listHtml = details.length ? details.map(function (d) {
                     var q = d.q;
+                    var answerHtml;
+                    if (q.type === '객관식') {
+                        answerHtml = '<div class="choices review-choices">' + q.choices.map(function (val, i) {
+                            var cls = 'choice-btn';
+                            var tag = '';
+                            var isAnswer = q.answer.indexOf(val) !== -1;
+                            var isSelected = d.userAnswerText === val;
+                            if (isAnswer) { cls += ' correct'; tag = '<span class="choice-tag">' + ICON_CHECK + ' 정답</span>'; }
+                            else if (isSelected) { cls += ' incorrect'; tag = '<span class="choice-tag">' + ICON_X + ' 오답</span>'; }
+                            return '<button type="button" class="' + cls + '" disabled>' +
+                                '<span class="choice-num">' + (i + 1) + '</span>' +
+                                '<span class="choice-text">' + esc(val) + '</span>' + tag +
+                                '</button>';
+                        }).join('') + '</div>';
+                    } else {
+                        answerHtml = '<div class="review-answers">' +
+                            '<div>내 답: ' + esc(d.userAnswerText || '') + (d.userAnswerText ? '' : '미응답') + '</div>' +
+                            '<div>정답: ' + esc(q.answer.join(' / ')) + '</div>' +
+                            '</div>';
+                    }
                     return '<div class="card review-item">' +
                         '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번</div>' +
                         '<div class="q-text">' + esc(q.question) + '</div>' +
                         (q.reference ? '<div class="q-reference">' + renderRefMd(q.reference) + '</div>' : '') +
-                        '<div class="review-answers">' +
-                        '<div>내 답: ' + esc(d.userAnswerText || '') + (d.userAnswerText ? '' : '미응답') + '</div>' +
-                        '<div>정답: ' + esc(q.answer.join(' / ')) + '</div>' +
-                        '</div>' +
+                        answerHtml +
                         '<div class="explanation-block">' + esc(q.explanation) + '</div>' +
                         '</div>';
                 }).join('') : '<p class="lead">아직 틀린 문제가 없습니다. 모의고사·회차별 풀이를 채점하거나 무한 문제 풀이에서 오답을 남기면 여기에 표시됩니다.</p>';
