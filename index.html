@@ -1486,7 +1486,7 @@
                 if (!canStart) statusHtml += '<div class="notice">회차를 1개 이상 선택해주세요.</div>';
                 if (matchesSaved && saved.stats.solved > 0) {
                     var acc = saved.stats.solved ? (saved.stats.correct / saved.stats.solved * 100) : 0;
-                    statusHtml += '<p>진행 중인 기록이 있습니다. (' + saved.stats.solved + '문제 · 정답률 ' + fmt1(acc) + '%)</p>';
+                    statusHtml += '<div class="notice">진행 중인 기록이 있습니다. (' + saved.stats.solved + '문제 · 정답률 ' + fmt1(acc) + '%)</div>';
                 }
 
                 var actionsHtml = '<button type="button" class="btn btn-primary full" id="startInfinite" ' + (canStart ? '' : 'disabled') + '>' +
@@ -1928,12 +1928,12 @@
                     actionsHtml = '<button type="button" class="btn btn-primary full" id="startMock" ' + (canStart ? '' : 'disabled') + '>모의고사 시작</button>';
                 } else if (!s.submitted) {
                     var answered = s.questionIds.filter(function (id) { return isAnswered(s.answers[id]); }).length;
-                    statusHtml += '<p>진행 중인 모의고사가 있습니다. (' + answered + '/' + s.questionIds.length + ' 응답 · ' + (s.rounds ? s.rounds.length : ROUNDS.length) + '개 회차)</p>';
+                    statusHtml += '<div class="notice">진행 중인 모의고사가 있습니다. (' + answered + '/' + s.questionIds.length + ' 응답 · ' + (s.rounds ? s.rounds.length : ROUNDS.length) + '개 회차)</div>';
                     actionsHtml = '<button type="button" class="btn btn-primary full" id="resumeMock">이어풀기</button>' +
                         '<button type="button" class="btn btn-outline full" id="newMock" ' + (canStart ? '' : 'disabled') + '>새 모의고사 시작</button>';
                 } else {
                     var result = scoreExam(s);
-                    statusHtml += '<p>완료된 모의고사가 있습니다. 총점 ' + fmt1(result.scorePercent) + '점 · ' + (result.pass ? '합격' : '불합격') + ' · ' + (s.rounds ? s.rounds.length : ROUNDS.length) + '개 회차</p>';
+                    statusHtml += '<div class="notice">완료된 모의고사가 있습니다. 총점 ' + fmt1(result.scorePercent) + '점 · ' + (result.pass ? '합격' : '불합격') + ' · ' + (s.rounds ? s.rounds.length : ROUNDS.length) + '개 회차</div>';
                     actionsHtml = '<button type="button" class="btn btn-primary full" id="viewMockResult">결과 보기</button>' +
                         '<button type="button" class="btn btn-outline full" id="newMock" ' + (canStart ? '' : 'disabled') + '>새 모의고사 시작</button>';
                 }
@@ -2336,7 +2336,7 @@
                         actionsHtml = '<button type="button" class="btn btn-primary full" id="startWrong">틀린 문제 다시 풀어보기</button>';
                     } else if (!wrongS.submitted) {
                         var answered = wrongS.questionIds.filter(function (id) { return isAnswered(wrongS.answers[id]); }).length;
-                        actionsHtml = '<p class="lead">진행 중인 다시 풀기가 있습니다. (' + answered + '/' + wrongS.questionIds.length + ' 응답)</p>' +
+                        actionsHtml = '<div class="notice">진행 중인 다시 풀기가 있습니다. (' + answered + '/' + wrongS.questionIds.length + ' 응답)</div>' +
                             '<button type="button" class="btn btn-primary full" id="resumeWrong">이어풀기</button>' +
                             '<button type="button" class="btn btn-outline full" id="newWrong">새로 다시 풀기</button>';
                     } else {
