@@ -1401,7 +1401,7 @@
                     '</button>' +
                     '<button type="button" class="mode-card" data-nav="wrongList">' +
                     '<h2>틀린 문제 모아보기</h2>' +
-                    '<p>모의고사·회차별 풀이·무한 문제 풀이를 통틀어 현재 틀린 문제만 모아 다시 확인합니다.</p>' +
+                    '<p>현재 진행 중인 풀이에서 틀린 문제만 모아 다시 확인합니다.</p>' +
                     '</button>' +
                     '</div>' +
                     '<button type="button" class="btn btn-outline btn-danger-outline full" id="resetAllBtn">전체 기록 초기화</button>' +
@@ -2354,7 +2354,7 @@
 
                 app.innerHTML = headerHtml('틀린 문제 모아보기') +
                     '<main class="container">' +
-                    '<p class="lead">모의고사·회차별 풀이·무한 문제 풀이를 통틀어 현재 틀린 문제 ' + details.length + '개입니다.</p>' +
+                    '<p class="lead">틀린 문제: ' + details.length + '개</p>' +
                     actionsHtml +
                     listHtml +
                     '</main>';
