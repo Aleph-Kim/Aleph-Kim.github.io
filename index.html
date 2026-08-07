@@ -1038,11 +1038,14 @@
             function loadQuizData() {
                 state = { screen: 'loading' };
                 render();
-                fetch(DATA_URL, { cache: 'no-cache' }).then(function (res) {
-                    if (!res.ok) throw new Error('HTTP ' + res.status);
-                    return res.json();
-                }).then(function (raw) {
-                    initData(raw);
+                Promise.all([
+                    fetch(DATA_URL, { cache: 'no-cache' }).then(function (res) {
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        return res.json();
+                    }),
+                    idbPreload()
+                ]).then(function (results) {
+                    initData(results[0]);
                     nav('home');
                 }).catch(function (err) {
                     state = { screen: 'error' };
@@ -1050,21 +1053,73 @@
                 });
             }
 
-            /* ---------- storage helpers ---------- */
-            function loadState(key, fallback) {
+            /* ---------- storage helpers (IndexedDB) ---------- */
+            var IDB_NAME = 'adsp-store';
+            var IDB_STORE = 'kv';
+            var idbCache = {};
+            var idbDb = null;
+
+            function openIdb() {
+                return new Promise(function (resolve, reject) {
+                    var req = indexedDB.open(IDB_NAME, 1);
+                    req.onupgradeneeded = function () { req.result.createObjectStore(IDB_STORE); };
+                    req.onsuccess = function () { resolve(req.result); };
+                    req.onerror = function () { reject(req.error); };
+                });
+            }
+            function idbPut(key, obj) {
+                if (!idbDb) return;
+                try { idbDb.transaction(IDB_STORE, 'readwrite').objectStore(IDB_STORE).put(obj, key); } catch (e) { /* ignore */ }
+            }
+            function idbDelete(key) {
+                if (!idbDb) return;
+                try { idbDb.transaction(IDB_STORE, 'readwrite').objectStore(IDB_STORE).delete(key); } catch (e) { /* ignore */ }
+            }
+            function migrateFromLocalStorage() {
                 try {
-                    var s = localStorage.getItem(key);
-                    if (!s) return fallback;
-                    var obj = JSON.parse(s);
-                    if (!obj || obj.v !== SCHEMA_V) return fallback;
-                    return obj;
-                } catch (e) { return fallback; }
+                    var keys = [];
+                    for (var i = 0; i < localStorage.length; i++) {
+                        var k = localStorage.key(i);
+                        if (k && k.indexOf('adsp:') === 0) keys.push(k);
+                    }
+                    keys.forEach(function (k) {
+                        if (idbCache[k] === undefined) {
+                            try {
+                                var obj = JSON.parse(localStorage.getItem(k));
+                                idbCache[k] = obj;
+                                idbPut(k, obj);
+                            } catch (e) { /* ignore */ }
+                        }
+                        localStorage.removeItem(k);
+                    });
+                } catch (e) { /* ignore */ }
+            }
+            function idbPreload() {
+                return openIdb().then(function (db) {
+                    idbDb = db;
+                    return new Promise(function (resolve) {
+                        var req = db.transaction(IDB_STORE, 'readonly').objectStore(IDB_STORE).openCursor();
+                        req.onsuccess = function (e) {
+                            var cursor = e.target.result;
+                            if (cursor) { idbCache[cursor.key] = cursor.value; cursor.continue(); }
+                            else resolve();
+                        };
+                        req.onerror = function () { resolve(); };
+                    });
+                }).then(migrateFromLocalStorage).catch(function () { /* IndexedDB 사용 불가 시 메모리 캐시로만 동작 */ });
+            }
+            function loadState(key, fallback) {
+                var obj = idbCache[key];
+                if (!obj || obj.v !== SCHEMA_V) return fallback;
+                return obj;
             }
             function saveState(key, obj) {
-                try { localStorage.setItem(key, JSON.stringify(obj)); } catch (e) { /* 저장 없이 진행 */ }
+                idbCache[key] = obj;
+                idbPut(key, obj);
             }
             function removeState(key) {
-                try { localStorage.removeItem(key); } catch (e) { /* ignore */ }
+                delete idbCache[key];
+                idbDelete(key);
             }
 
             /* ---------- utils ---------- */
