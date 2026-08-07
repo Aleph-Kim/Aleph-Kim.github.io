@@ -1,888 +1,1559 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>ADsP 기출문제 풀이</title>
-<style>
-*{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
-:root{
-  --bg:#f5f6f9;
-  --surface:#ffffff;
-  --border:#e2e5ea;
-  --text:#1f2430;
-  --text-muted:#6b7280;
-  --primary:#3b5bdb;
-  --primary-light:#eef1fd;
-  --success:#2f9e44;
-  --success-bg:#ebfbee;
-  --danger:#e03131;
-  --danger-bg:#fff0f0;
-  --warning-bg:#fff9db;
-  --warning-text:#8a5a00;
-  --radius:10px;
-  --shadow:0 1px 3px rgba(0,0,0,0.06);
-}
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Segoe UI",sans-serif;
-  font-size:16px;
-  line-height:1.6;
-  -webkit-text-size-adjust:100%;
-}
-button{font-family:inherit;}
-h1,h2,h3{font-family:inherit;}
-.container{max-width:720px;margin:0 auto;padding:16px;}
-.app-header{position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--border);z-index:10;}
-.header-row{display:flex;align-items:center;gap:12px;padding:14px 16px;max-width:720px;margin:0 auto;}
-.header-row h1{font-size:18px;margin:0;flex:1;}
-.btn-link{background:none;border:none;color:var(--primary);font-size:15px;cursor:pointer;padding:6px 0;font-weight:600;}
-
-.lead{color:var(--text-muted);font-size:15px;margin:16px 0;}
-
-.mode-list{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
-.mode-card{display:block;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;box-shadow:var(--shadow);width:100%;}
-.mode-card h2{margin:0 0 6px;font-size:17px;}
-.mode-card p{margin:0;color:var(--text-muted);font-size:14px;}
-
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 18px;font-size:16px;border-radius:var(--radius);border:1.5px solid transparent;cursor:pointer;font-weight:600;}
-.btn.full{width:100%;margin-bottom:10px;}
-.btn.small{min-height:36px;padding:6px 12px;font-size:13px;}
-.btn-primary{background:var(--primary);color:#fff;}
-.btn-primary:disabled{background:#b7c1e0;cursor:not-allowed;}
-.btn-outline{background:var(--surface);color:var(--text);border-color:var(--border);}
-.btn-success{background:var(--success-bg);color:var(--success);border-color:var(--success);}
-.btn-success.active{background:var(--success);color:#fff;}
-.btn-danger{background:var(--danger-bg);color:var(--danger);border-color:var(--danger);}
-.btn-danger.active{background:var(--danger);color:#fff;}
-.btn-danger-outline{color:var(--danger);border-color:var(--danger);}
-
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px;}
-.q-source{font-size:13px;color:var(--text-muted);margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
-.q-type{background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:20px;font-size:12px;font-weight:600;}
-.q-text{font-size:17px;line-height:1.75;margin-bottom:18px;white-space:pre-wrap;}
-
-.choices{display:flex;flex-direction:column;gap:10px;}
-.choice-btn{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;font-size:16px;line-height:1.6;cursor:pointer;}
-.choice-num{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
-.choice-text{flex:1;word-break:break-word;padding-top:1px;}
-.choice-tag{flex:0 0 auto;font-size:12px;font-weight:700;white-space:nowrap;}
-.choice-btn.selected{border-color:var(--primary);background:var(--primary-light);}
-.choice-btn.correct{border-color:var(--success);background:var(--success-bg);}
-.choice-btn.incorrect{border-color:var(--danger);background:var(--danger-bg);}
-.choice-btn:disabled{cursor:default;}
-
-.text-answer{width:100%;min-height:96px;padding:12px 14px;font-size:16px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;resize:vertical;}
-
-.explanation-block{margin-top:16px;padding:14px 16px;background:var(--bg);border-left:4px solid var(--primary);border-radius:6px;font-size:15px;line-height:1.75;white-space:pre-wrap;}
-.explanation-answer{font-weight:700;margin-bottom:6px;}
-
-.self-grade{margin-top:14px;}
-.self-grade p{margin:0 0 8px;font-size:14px;color:var(--text-muted);}
-.self-grade-actions{display:flex;gap:10px;flex-wrap:wrap;}
-
-.stat-bar{display:flex;gap:10px;margin:16px 0 10px;}
-.stat-item{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center;}
-.stat-num{display:block;font-size:22px;font-weight:700;}
-.stat-label{font-size:12px;color:var(--text-muted);}
-
-.action-row{margin:16px 0;}
-.action-row.two-col{display:flex;gap:10px;}
-.action-row.two-col .btn{flex:1;margin-bottom:0;}
-
-.progress-line{font-size:14px;color:var(--text-muted);margin-bottom:10px;}
-
-.qnav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:6px;margin:16px 0;}
-.qnav-btn{aspect-ratio:1;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);font-size:13px;cursor:pointer;color:var(--text);}
-.qnav-btn.answered{background:var(--primary-light);border-color:var(--primary);color:var(--primary);}
-.qnav-btn.current{border-color:var(--text);border-width:2.5px;}
-
-.round-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0;}
-.round-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;cursor:pointer;}
-.round-num{font-size:20px;font-weight:700;}
-.round-status{font-size:13px;color:var(--text-muted);margin-top:4px;}
-.round-card.status-pass .round-status{color:var(--success);font-weight:600;}
-.round-card.status-fail .round-status{color:var(--danger);font-weight:600;}
-.round-card.status-progress .round-status{color:#c17b00;font-weight:600;}
-@media (min-width:480px){ .round-grid{grid-template-columns:repeat(4,1fr);} }
-
-.result-banner{padding:20px;border-radius:var(--radius);text-align:center;font-size:20px;font-weight:700;margin:16px 0;}
-.result-banner.pass{background:var(--success-bg);color:var(--success);}
-.result-banner.fail{background:var(--danger-bg);color:var(--danger);}
-
-.score-summary{font-size:16px;margin-bottom:14px;text-align:center;font-weight:600;}
-.notice{background:var(--warning-bg);color:var(--warning-text);padding:12px 14px;border-radius:8px;font-size:14px;margin-bottom:14px;line-height:1.6;}
-
-.table-wrap{overflow-x:auto;margin-bottom:16px;}
-.subject-table{width:100%;border-collapse:collapse;font-size:14px;min-width:420px;}
-.subject-table th,.subject-table td{padding:9px 10px;border-bottom:1px solid var(--border);text-align:center;}
-.subject-table .fail-row td{color:var(--danger);font-weight:600;}
-
-.filter-tabs{display:flex;gap:8px;margin:18px 0 10px;}
-.tab-btn{flex:1;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;font-size:14px;}
-.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
-
-.ox{font-weight:700;font-size:12px;padding:3px 9px;border-radius:20px;}
-.ox-correct{background:var(--success-bg);color:var(--success);}
-.ox-wrong{background:var(--danger-bg);color:var(--danger);}
-.review-answers{font-size:14px;margin-bottom:8px;display:flex;flex-direction:column;gap:4px;}
-
-.modal-overlay{position:fixed;inset:0;background:rgba(20,22,30,0.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100;}
-.modal-box{background:var(--surface);border-radius:var(--radius);padding:22px;max-width:360px;width:100%;}
-.modal-box p{margin:0 0 18px;font-size:15px;line-height:1.6;white-space:pre-wrap;}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;}
-.modal-actions .btn{margin-bottom:0;}
-
-footer.app-footer{text-align:center;color:var(--text-muted);font-size:12px;padding:24px 16px 40px;}
-</style>
-</head>
-<body>
-<div id="app"></div>
-<script>
-(function(){
-'use strict';
-
-var SCHEMA_V = 1;
-var SUBJECT_NAMES = {1:'데이터 이해',2:'데이터의 분석 기획',3:'데이터 분석'};
-var DATA_URL = 'exam.json';
-var ROUNDS = [];
-
-var KEY_INFINITE = 'adsp:infinite';
-var KEY_MOCK = 'adsp:mock';
-function KEY_ROUND(r){ return 'adsp:round:' + r; }
-function ALL_KEYS(){
-  var ks = [KEY_INFINITE, KEY_MOCK];
-  ROUNDS.forEach(function(r){ ks.push(KEY_ROUND(r)); });
-  return ks;
-}
-
-/* ---------- data load & preprocessing ---------- */
-var allQuestions = [];
-var questionById = {};
-var poolQuestions = [];
-var questionsByRound = {};
-
-function initData(raw){
-  raw.rounds.forEach(function(r){
-    r.subjects.forEach(function(s){
-      s.questions.forEach(function(q){
-        var excluded = (r.round === 14 && s.subject_no === 3 && q.number === 24);
-        var globalNumber = s.subject_no === 1 ? q.number : (s.subject_no === 2 ? q.number + 10 : q.number + 20);
-        allQuestions.push({
-          id: r.round + '_' + s.subject_no + '_' + q.number,
-          round: r.round,
-          subject_no: s.subject_no,
-          subject: s.subject,
-          number: q.number,
-          globalNumber: globalNumber,
-          question: q.question,
-          answer: Array.isArray(q.answer) ? q.answer : [q.answer],
-          explanation: q.explanation,
-          choices: q.choices || [],
-          type: q.type,
-          excluded: excluded
-        });
-      });
-    });
-  });
-  allQuestions.forEach(function(q){ questionById[q.id] = q; });
-  poolQuestions = allQuestions.filter(function(q){ return !q.excluded; });
-  ROUNDS = raw.rounds.map(function(r){ return r.round; }).sort(function(a,b){ return a - b; });
-  ROUNDS.forEach(function(rn){
-    questionsByRound[rn] = allQuestions.filter(function(q){ return q.round === rn && !q.excluded; })
-      .sort(function(a,b){ return a.globalNumber - b.globalNumber; });
-  });
-}
-
-function loadQuizData(){
-  state = { screen: 'loading' };
-  render();
-  fetch(DATA_URL, { cache: 'no-cache' }).then(function(res){
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    return res.json();
-  }).then(function(raw){
-    initData(raw);
-    nav('home');
-  }).catch(function(err){
-    state = { screen: 'error' };
-    render();
-  });
-}
-
-/* ---------- storage helpers ---------- */
-function loadState(key, fallback){
-  try{
-    var s = localStorage.getItem(key);
-    if(!s) return fallback;
-    var obj = JSON.parse(s);
-    if(!obj || obj.v !== SCHEMA_V) return fallback;
-    return obj;
-  }catch(e){ return fallback; }
-}
-function saveState(key, obj){
-  try{ localStorage.setItem(key, JSON.stringify(obj)); }catch(e){ /* 저장 없이 진행 */ }
-}
-function removeState(key){
-  try{ localStorage.removeItem(key); }catch(e){ /* ignore */ }
-}
-
-/* ---------- utils ---------- */
-function shuffle(arr){
-  var a = arr.slice();
-  for(var i = a.length - 1; i > 0; i--){
-    var j = Math.floor(Math.random() * (i + 1));
-    var t = a[i]; a[i] = a[j]; a[j] = t;
-  }
-  return a;
-}
-function esc(str){
-  var d = document.createElement('div');
-  d.textContent = (str === null || str === undefined) ? '' : String(str);
-  return d.innerHTML;
-}
-function fmt1(n){
-  return (Math.round(n * 10) / 10).toFixed(1);
-}
-function on(sel, evt, handler){
-  var els = app.querySelectorAll(sel);
-  els.forEach(function(el){ el.addEventListener(evt, handler); });
-}
-
-/* ---------- modal ---------- */
-function confirmModal(message, onYes){
-  var overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
-  var box = document.createElement('div');
-  box.className = 'modal-box';
-  var p = document.createElement('p');
-  p.textContent = message;
-  var actions = document.createElement('div');
-  actions.className = 'modal-actions';
-  var cancelBtn = document.createElement('button');
-  cancelBtn.className = 'btn btn-outline';
-  cancelBtn.textContent = '취소';
-  var okBtn = document.createElement('button');
-  okBtn.className = 'btn btn-primary';
-  okBtn.textContent = '확인';
-  actions.appendChild(cancelBtn);
-  actions.appendChild(okBtn);
-  box.appendChild(p);
-  box.appendChild(actions);
-  overlay.appendChild(box);
-  document.body.appendChild(overlay);
-  function close(){
-    if(overlay.parentNode) document.body.removeChild(overlay);
-    document.removeEventListener('keydown', onKey);
-  }
-  function onKey(e){ if(e.key === 'Escape') close(); }
-  document.addEventListener('keydown', onKey);
-  cancelBtn.addEventListener('click', close);
-  okBtn.addEventListener('click', function(){ close(); onYes(); });
-}
-
-/* ---------- app state ---------- */
-var app = document.getElementById('app');
-var state = { screen: 'loading' };
-
-function nav(screen, extra){
-  state = Object.assign({ screen: screen }, extra || {});
-  render();
-  window.scrollTo(0, 0);
-}
-
-function render(){
-  if(state.screen === 'loading') renderLoading();
-  else if(state.screen === 'error') renderError();
-  else if(state.screen === 'home') renderHome();
-  else if(state.screen === 'infinite') renderInfinite();
-  else if(state.screen === 'mockHub') renderMockHub();
-  else if(state.screen === 'mockSolve') renderExamSolve('mock');
-  else if(state.screen === 'mockResult') renderExamResult('mock');
-  else if(state.screen === 'roundHub') renderRoundHub();
-  else if(state.screen === 'roundSolve') renderExamSolve('round');
-  else if(state.screen === 'roundResult') renderExamResult('round');
-}
-
-/* ================= LOADING / ERROR ================= */
-function renderLoading(){
-  app.innerHTML =
-    headerHtml('ADsP 기출문제 풀이', false) +
-    '<main class="container">' +
-      '<p class="lead">문제 데이터를 불러오는 중입니다...</p>' +
-    '</main>';
-}
-function renderError(){
-  app.innerHTML =
-    headerHtml('ADsP 기출문제 풀이', false) +
-    '<main class="container">' +
-      '<div class="card error-card">' +
-        '<h2>문제 데이터를 불러오지 못했습니다</h2>' +
-        '<p class="lead">exam.json을 불러오는 중 문제가 발생했습니다. 네트워크 연결을 확인한 뒤 다시 시도해주세요.</p>' +
-        '<button type="button" class="btn btn-primary full" id="retryLoadBtn">다시 시도</button>' +
-      '</div>' +
-    '</main>';
-  on('#retryLoadBtn', 'click', function(){ loadQuizData(); });
-}
-
-function headerHtml(title, showHome){
-  return '<header class="app-header"><div class="header-row">' +
-    (showHome !== false ? '<button class="btn-link" id="homeBtn">← 홈</button>' : '<span></span>') +
-    '<h1>' + esc(title) + '</h1>' +
-    '</div></header>';
-}
-
-/* ================= HOME ================= */
-function renderHome(){
-  var roundRange = ROUNDS[0] + '~' + ROUNDS[ROUNDS.length - 1] + '회';
-  var excludedCount = allQuestions.length - poolQuestions.length;
-  app.innerHTML =
-    headerHtml('ADsP 기출문제 풀이') +
-    '<main class="container">' +
-      '<p class="lead">' + roundRange + ' ADsP 기출문제 ' + poolQuestions.length + '문항' + (excludedCount ? '(제외 ' + excludedCount + '문항)' : '') + '으로 학습하세요.</p>' +
-      '<div class="mode-list">' +
-        '<button type="button" class="mode-card" data-nav="infinite">' +
-          '<h2>무한 문제 풀이</h2>' +
-          '<p>전체 문항에서 한 문제씩 랜덤 출제. 정답 확인 후 바로 다음 문제로 넘어갑니다.</p>' +
-        '</button>' +
-        '<button type="button" class="mode-card" data-nav="mockHub">' +
-          '<h2>모의고사</h2>' +
-          '<p>' + ROUNDS.length + '개 회차 전체에서 과목별로 무작위 추출한 50문항 실전 모의고사.</p>' +
-        '</button>' +
-        '<button type="button" class="mode-card" data-nav="roundHub">' +
-          '<h2>회차별 문제 풀이</h2>' +
-          '<p>' + roundRange + ' 중 하나를 선택해 해당 회차 문제를 그대로 풀어봅니다.</p>' +
-        '</button>' +
-      '</div>' +
-      '<button type="button" class="btn btn-outline btn-danger-outline full" id="resetAllBtn">전체 기록 초기화</button>' +
-    '</main>';
-
-  on('[data-nav]', 'click', function(e){ nav(e.currentTarget.getAttribute('data-nav')); });
-  on('#resetAllBtn', 'click', function(){
-    confirmModal('모든 학습 기록(무한 풀이 통계, 모의고사, 회차별 진행 데이터)이 삭제됩니다. 계속할까요?', function(){
-      ALL_KEYS().forEach(function(k){ removeState(k); });
-      nav('home');
-    });
-  });
-}
-
-/* ================= INFINITE MODE ================= */
-function defaultInfiniteState(){
-  return { v: SCHEMA_V, stats: { solved: 0, correct: 0 }, pool: shuffle(poolQuestions.map(function(q){ return q.id; })), current: null };
-}
-function getInfiniteState(){
-  var s = loadState(KEY_INFINITE, null);
-  if(!s){ s = defaultInfiniteState(); saveState(KEY_INFINITE, s); }
-  return s;
-}
-function drawNextInfinite(s){
-  if(s.pool.length === 0){
-    s.pool = shuffle(poolQuestions.map(function(q){ return q.id; }));
-  }
-  var id = s.pool.pop();
-  var q = questionById[id];
-  var choiceOrder = q.type === '객관식' ? shuffle(q.choices) : null;
-  s.current = { id: id, choiceOrder: choiceOrder, selectedIndex: null, typed: '', revealed: false, selfGrade: null, graded: false };
-}
-
-function renderInfinite(){
-  var s = getInfiniteState();
-  if(!s.current){ drawNextInfinite(s); saveState(KEY_INFINITE, s); }
-  var cur = s.current;
-  var q = questionById[cur.id];
-  var acc = s.stats.solved ? (s.stats.correct / s.stats.solved * 100) : 0;
-
-  var choicesHtml = '';
-  if(q.type === '객관식'){
-    choicesHtml = cur.choiceOrder.map(function(val, i){
-      var cls = 'choice-btn';
-      var tag = '';
-      var disabled = '';
-      if(cur.revealed){
-        disabled = 'disabled';
-        var isAnswer = q.answer.indexOf(val) !== -1;
-        var isSelected = cur.selectedIndex === i;
-        if(isAnswer){ cls += ' correct'; tag = '<span class="choice-tag">✓ 정답</span>'; }
-        else if(isSelected){ cls += ' incorrect'; tag = '<span class="choice-tag">✗ 오답</span>'; }
-      } else if(cur.selectedIndex === i){
-        cls += ' selected';
-      }
-      return '<button type="button" class="' + cls + '" data-idx="' + i + '" ' + disabled + '>' +
-        '<span class="choice-num">' + (i+1) + '</span>' +
-        '<span class="choice-text">' + esc(val) + '</span>' + tag +
-        '</button>';
-    }).join('');
-  } else {
-    choicesHtml = '<textarea id="typedAnswer" class="text-answer" placeholder="답을 입력하세요"' + (cur.revealed ? ' disabled' : '') + '>' + esc(cur.typed) + '</textarea>';
-  }
-
-  var revealHtml = '';
-  if(cur.revealed){
-    revealHtml = '<div class="explanation-block">' +
-      '<div class="explanation-answer">정답: ' + esc(q.answer.join(' / ')) + '</div>' +
-      '<div>' + esc(q.explanation) + '</div>' +
-      '</div>';
-    if(q.type !== '객관식'){
-      revealHtml += '<div class="self-grade"><p>내 답을 직접 채점해주세요.</p><div class="self-grade-actions">' +
-        '<button type="button" class="btn btn-success ' + (cur.selfGrade === 'correct' ? 'active' : '') + '" id="gradeCorrect">✓ 정답</button>' +
-        '<button type="button" class="btn btn-danger ' + (cur.selfGrade === 'incorrect' ? 'active' : '') + '" id="gradeIncorrect">✗ 오답</button>' +
-        '</div></div>';
-    }
-  }
-
-  var canCheck = q.type === '객관식' ? cur.selectedIndex !== null : cur.typed.trim().length > 0;
-
-  app.innerHTML =
-    headerHtml('무한 문제 풀이') +
-    '<main class="container">' +
-      '<div class="stat-bar">' +
-        '<div class="stat-item"><span class="stat-num">' + s.stats.solved + '</span><span class="stat-label">푼 문제 수</span></div>' +
-        '<div class="stat-item"><span class="stat-num">' + s.stats.correct + '</span><span class="stat-label">맞은 수</span></div>' +
-        '<div class="stat-item"><span class="stat-num">' + fmt1(acc) + '%</span><span class="stat-label">정답률</span></div>' +
-      '</div>' +
-      '<button type="button" class="btn btn-outline small" id="resetInfBtn">기록 초기화</button>' +
-      '<div class="card question-card">' +
-        '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 <span class="q-type">' + esc(q.type) + '</span></div>' +
-        '<div class="q-text">' + esc(q.question) + '</div>' +
-        '<div class="choices">' + choicesHtml + '</div>' +
-        revealHtml +
-      '</div>' +
-      '<div class="action-row">' +
-        (!cur.revealed
-          ? '<button type="button" class="btn btn-primary full" id="checkBtn" ' + (canCheck ? '' : 'disabled') + '>정답 확인</button>'
-          : '<button type="button" class="btn btn-primary full" id="nextBtn" ' + (cur.graded ? '' : 'disabled') + '>다음 문제</button>') +
-      '</div>' +
-    '</main>';
-
-  on('#homeBtn', 'click', function(){ nav('home'); });
-  on('#resetInfBtn', 'click', function(){
-    confirmModal('무한 문제 풀이 통계와 진행 기록을 초기화합니다. 계속할까요?', function(){
-      saveState(KEY_INFINITE, defaultInfiniteState());
-      render();
-    });
-  });
-
-  if(q.type === '객관식'){
-    on('.choice-btn', 'click', function(e){
-      if(cur.revealed) return;
-      cur.selectedIndex = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
-      saveState(KEY_INFINITE, s);
-      render();
-    });
-  } else {
-    var ta = document.getElementById('typedAnswer');
-    if(ta){
-      ta.addEventListener('input', function(){
-        cur.typed = ta.value;
-        saveState(KEY_INFINITE, s);
-        var checkBtn = document.getElementById('checkBtn');
-        if(checkBtn) checkBtn.disabled = cur.typed.trim().length === 0;
-      });
-    }
-  }
-
-  on('#checkBtn', 'click', function(){
-    cur.revealed = true;
-    if(q.type === '객관식'){
-      var val = cur.choiceOrder[cur.selectedIndex];
-      var isCorrect = q.answer.indexOf(val) !== -1;
-      cur.graded = true;
-      s.stats.solved += 1;
-      if(isCorrect) s.stats.correct += 1;
-    }
-    saveState(KEY_INFINITE, s);
-    render();
-  });
-  on('#nextBtn', 'click', function(){
-    s.current = null;
-    saveState(KEY_INFINITE, s);
-    render();
-  });
-  on('#gradeCorrect', 'click', function(){
-    if(cur.graded) return;
-    cur.selfGrade = 'correct';
-    cur.graded = true;
-    s.stats.solved += 1;
-    s.stats.correct += 1;
-    saveState(KEY_INFINITE, s);
-    render();
-  });
-  on('#gradeIncorrect', 'click', function(){
-    if(cur.graded) return;
-    cur.selfGrade = 'incorrect';
-    cur.graded = true;
-    s.stats.solved += 1;
-    saveState(KEY_INFINITE, s);
-    render();
-  });
-}
-
-/* ================= EXAM SESSION (mock & round shared) ================= */
-function buildChoiceOrders(ids){
-  var orders = {};
-  ids.forEach(function(id){
-    var q = questionById[id];
-    if(q.type === '객관식') orders[id] = shuffle(q.choices);
-  });
-  return orders;
-}
-function emptyMap(ids, val){
-  var m = {};
-  ids.forEach(function(id){ m[id] = val; });
-  return m;
-}
-function createMockSession(){
-  var bySubj = {1: [], 2: [], 3: []};
-  poolQuestions.forEach(function(q){ bySubj[q.subject_no].push(q.id); });
-  function pick(arr, n){ return shuffle(arr).slice(0, n); }
-  var ids = pick(bySubj[1], 10).concat(pick(bySubj[2], 10), pick(bySubj[3], 30));
-  return {
-    v: SCHEMA_V, mode: 'mock', round: null,
-    questionIds: ids,
-    choiceOrder: buildChoiceOrders(ids),
-    answers: emptyMap(ids, null),
-    selfGrades: emptyMap(ids, null),
-    submitted: false, currentIndex: 0
-  };
-}
-function createRoundSession(round){
-  var ids = questionsByRound[round].map(function(q){ return q.id; });
-  return {
-    v: SCHEMA_V, mode: 'round', round: round,
-    questionIds: ids,
-    choiceOrder: buildChoiceOrders(ids),
-    answers: emptyMap(ids, null),
-    selfGrades: emptyMap(ids, null),
-    submitted: false, currentIndex: 0
-  };
-}
-function isAnswered(val){ return val !== null && val !== undefined && val !== ''; }
-
-function scoreExam(s){
-  var ids = s.questionIds;
-  var subjTotals = {1: {correct:0,total:0}, 2: {correct:0,total:0}, 3: {correct:0,total:0}};
-  var totalCorrect = 0;
-  var ungraded = 0;
-  var details = ids.map(function(id){
-    var q = questionById[id];
-    var correct = false;
-    var userAnswerText = '';
-    if(q.type === '객관식'){
-      var idx = s.answers[id];
-      if(isAnswered(idx)){
-        var val = s.choiceOrder[id][idx];
-        userAnswerText = val;
-        correct = q.answer.indexOf(val) !== -1;
-      }
-    } else {
-      userAnswerText = s.answers[id] || '';
-      var sg = s.selfGrades[id];
-      if(userAnswerText.trim() && sg === null) ungraded++;
-      correct = sg === 'correct';
-    }
-    subjTotals[q.subject_no].total++;
-    if(correct){ subjTotals[q.subject_no].correct++; totalCorrect++; }
-    return { id: id, q: q, correct: correct, userAnswerText: userAnswerText };
-  });
-  var totalCount = ids.length;
-  var scorePercent = totalCount ? (totalCorrect * 100 / totalCount) : 0;
-  var passTotal = totalCorrect * 5 >= totalCount * 3;
-  var subjectResults = [1,2,3].map(function(no){
-    var t = subjTotals[no];
-    var pct = t.total ? (t.correct * 100 / t.total) : 0;
-    var failing = !(t.correct * 5 >= t.total * 2);
-    return { subject_no: no, subject: SUBJECT_NAMES[no], correct: t.correct, total: t.total, pct: pct, failing: failing };
-  });
-  var anyFailing = subjectResults.some(function(r){ return r.failing; });
-  var pass = passTotal && !anyFailing;
-  return { details: details, subjectResults: subjectResults, totalCorrect: totalCorrect, totalCount: totalCount, scorePercent: scorePercent, pass: pass, anyFailing: anyFailing, ungraded: ungraded };
-}
-
-/* ---------- MOCK HUB ---------- */
-function renderMockHub(){
-  var s = loadState(KEY_MOCK, null);
-  var statusHtml = '<p class="lead">전체 ' + ROUNDS.length + '회차에서 과목별로 무작위 추출한 50문항 모의고사입니다.</p>';
-  var actionsHtml = '';
-  if(!s){
-    actionsHtml = '<button type="button" class="btn btn-primary full" id="startMock">모의고사 시작</button>';
-  } else if(!s.submitted){
-    var answered = s.questionIds.filter(function(id){ return isAnswered(s.answers[id]); }).length;
-    statusHtml += '<p>진행 중인 모의고사가 있습니다. (' + answered + '/' + s.questionIds.length + ' 응답)</p>';
-    actionsHtml = '<button type="button" class="btn btn-primary full" id="resumeMock">이어풀기</button>' +
-      '<button type="button" class="btn btn-outline full" id="newMock">새 모의고사 시작</button>';
-  } else {
-    var result = scoreExam(s);
-    statusHtml += '<p>완료된 모의고사가 있습니다. 총점 ' + fmt1(result.scorePercent) + '점 · ' + (result.pass ? '합격' : '불합격') + '</p>';
-    actionsHtml = '<button type="button" class="btn btn-primary full" id="viewMockResult">결과 보기</button>' +
-      '<button type="button" class="btn btn-outline full" id="newMock">새 모의고사 시작</button>';
-  }
-  app.innerHTML = headerHtml('모의고사') + '<main class="container">' + statusHtml + actionsHtml + '</main>';
-
-  on('#homeBtn', 'click', function(){ nav('home'); });
-  on('#startMock', 'click', function(){
-    saveState(KEY_MOCK, createMockSession());
-    nav('mockSolve');
-  });
-  on('#resumeMock', 'click', function(){ nav('mockSolve'); });
-  on('#viewMockResult', 'click', function(){ nav('mockResult'); });
-  on('#newMock', 'click', function(){
-    confirmModal('기존 모의고사 진행 데이터를 덮어씁니다. 새 모의고사를 시작할까요?', function(){
-      saveState(KEY_MOCK, createMockSession());
-      nav('mockSolve');
-    });
-  });
-}
-
-/* ---------- ROUND HUB ---------- */
-function renderRoundHub(){
-  var cards = ROUNDS.map(function(r){
-    var s = loadState(KEY_ROUND(r), null);
-    var total = questionsByRound[r].length;
-    var statusText, statusClass;
-    if(!s){ statusText = '미시작'; statusClass = ''; }
-    else if(!s.submitted){
-      var answered = s.questionIds.filter(function(id){ return isAnswered(s.answers[id]); }).length;
-      statusText = '진행 중 ' + answered + '/' + total;
-      statusClass = 'status-progress';
-    } else {
-      var result = scoreExam(s);
-      statusText = '완료 · ' + fmt1(result.scorePercent) + '점';
-      statusClass = result.pass ? 'status-pass' : 'status-fail';
-    }
-    return '<button type="button" class="round-card ' + statusClass + '" data-round="' + r + '">' +
-      '<div class="round-num">' + r + '회</div>' +
-      '<div class="round-status">' + statusText + '</div>' +
-      '</button>';
-  }).join('');
-
-  var roundRange = ROUNDS[0] + '~' + ROUNDS[ROUNDS.length - 1] + '회';
-  app.innerHTML = headerHtml('회차별 문제 풀이') +
-    '<main class="container">' +
-      '<p class="lead">' + roundRange + ' 중 하나를 선택하세요. (14회는 24번 제외 49문항)</p>' +
-      '<div class="round-grid">' + cards + '</div>' +
-    '</main>';
-
-  on('#homeBtn', 'click', function(){ nav('home'); });
-  on('.round-card', 'click', function(e){
-    var r = parseInt(e.currentTarget.getAttribute('data-round'), 10);
-    var s = loadState(KEY_ROUND(r), null);
-    if(!s){
-      saveState(KEY_ROUND(r), createRoundSession(r));
-      nav('roundSolve', { round: r });
-    } else if(!s.submitted){
-      nav('roundSolve', { round: r });
-    } else {
-      nav('roundResult', { round: r });
-    }
-  });
-}
-
-/* ---------- EXAM SOLVE (shared) ---------- */
-function renderExamSolve(mode){
-  var round = mode === 'round' ? state.round : null;
-  var key = mode === 'mock' ? KEY_MOCK : KEY_ROUND(round);
-  var s = loadState(key, null);
-  if(!s){
-    s = mode === 'mock' ? createMockSession() : createRoundSession(round);
-    saveState(key, s);
-  }
-  var ids = s.questionIds;
-  var idx = Math.max(0, Math.min(s.currentIndex || 0, ids.length - 1));
-  s.currentIndex = idx;
-  var id = ids[idx];
-  var q = questionById[id];
-
-  var bodyHtml = '';
-  if(q.type === '객관식'){
-    var order = s.choiceOrder[id];
-    var selIdx = s.answers[id];
-    bodyHtml = order.map(function(val, i){
-      var cls = 'choice-btn' + (selIdx === i ? ' selected' : '');
-      return '<button type="button" class="' + cls + '" data-idx="' + i + '">' +
-        '<span class="choice-num">' + (i+1) + '</span>' +
-        '<span class="choice-text">' + esc(val) + '</span>' +
-        '</button>';
-    }).join('');
-  } else {
-    var typed = s.answers[id] || '';
-    bodyHtml = '<textarea id="typedAnswer" class="text-answer" placeholder="답을 입력하세요">' + esc(typed) + '</textarea>';
-  }
-
-  var navGrid = ids.map(function(qid, i){
-    var answered = isAnswered(s.answers[qid]);
-    var cls = 'qnav-btn' + (answered ? ' answered' : '') + (i === idx ? ' current' : '');
-    return '<button type="button" class="' + cls + '" data-jump="' + i + '">' + (i+1) + '</button>';
-  }).join('');
-
-  var title = mode === 'mock' ? '모의고사' : (round + '회 회차별 풀이');
-
-  app.innerHTML = headerHtml(title) +
-    '<main class="container">' +
-      '<div class="progress-line">' + (idx+1) + ' / ' + ids.length + '문항</div>' +
-      '<div class="card question-card">' +
-        '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 <span class="q-type">' + esc(q.type) + '</span></div>' +
-        '<div class="q-text">' + esc(q.question) + '</div>' +
-        '<div class="choices">' + bodyHtml + '</div>' +
-      '</div>' +
-      '<div class="action-row two-col">' +
-        '<button type="button" class="btn btn-outline" id="prevBtn" ' + (idx===0?'disabled':'') + '>이전</button>' +
-        '<button type="button" class="btn btn-outline" id="nextBtn" ' + (idx===ids.length-1?'disabled':'') + '>다음</button>' +
-      '</div>' +
-      '<div class="qnav-grid">' + navGrid + '</div>' +
-      '<button type="button" class="btn btn-primary full" id="submitBtn">제출</button>' +
-    '</main>';
-
-  saveState(key, s);
-
-  on('#homeBtn', 'click', function(){ nav('home'); });
-  on('#prevBtn', 'click', function(){ s.currentIndex = idx - 1; saveState(key, s); render(); });
-  on('#nextBtn', 'click', function(){ s.currentIndex = idx + 1; saveState(key, s); render(); });
-  on('.qnav-btn', 'click', function(e){
-    s.currentIndex = parseInt(e.currentTarget.getAttribute('data-jump'), 10);
-    saveState(key, s);
-    render();
-  });
-
-  if(q.type === '객관식'){
-    on('.choice-btn', 'click', function(e){
-      s.answers[id] = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
-      saveState(key, s);
-      render();
-    });
-  } else {
-    var ta = document.getElementById('typedAnswer');
-    if(ta){
-      ta.addEventListener('input', function(){
-        s.answers[id] = ta.value;
-        saveState(key, s);
-        var curBtn = app.querySelector('.qnav-btn.current');
-        if(curBtn){
-          if(ta.value.trim().length > 0) curBtn.classList.add('answered');
-          else curBtn.classList.remove('answered');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>ADsP 기출문제 풀이</title>
+    <style>
+        * {
+            box-sizing: border-box;
         }
-      });
-    }
-  }
 
-  on('#submitBtn', 'click', function(){
-    var unanswered = ids.filter(function(qid){ return !isAnswered(s.answers[qid]); }).length;
-    var msg = unanswered > 0
-      ? ('미응답 문항이 ' + unanswered + '개 있습니다. 제출하시겠습니까?')
-      : '모든 문항에 응답했습니다. 제출하시겠습니까?';
-    confirmModal(msg, function(){
-      s.submitted = true;
-      s.submittedAt = Date.now();
-      saveState(key, s);
-      nav(mode === 'mock' ? 'mockResult' : 'roundResult', mode === 'round' ? { round: round } : {});
-    });
-  });
-}
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
 
-/* ---------- EXAM RESULT (shared) ---------- */
-function renderExamResult(mode){
-  var round = mode === 'round' ? state.round : null;
-  var key = mode === 'mock' ? KEY_MOCK : KEY_ROUND(round);
-  var s = loadState(key, null);
-  if(!s || !s.submitted){
-    nav(mode === 'mock' ? 'mockHub' : 'roundHub');
-    return;
-  }
-  var filter = state.reviewFilter || 'all';
-  var result = scoreExam(s);
-  var failingNames = result.subjectResults.filter(function(r){ return r.failing; }).map(function(r){ return r.subject; });
+        :root {
+            --bg: #f3f4f5;
+            --surface: #ffffff;
+            --surface-sunken: #f6f6f6;
+            --border: #e4e5e7;
+            --border-strong: #a6a7a9;
+            --text: #232324;
+            --text-muted: #6c6d6f;
+            --text-disabled: #cccccc;
+            --ink: #000000;
+            --mint: #0cefd3;
+            --mint-hover: #0ad9c0;
+            --mint-deep: #0a7b6e;
+            --mint-tint: #e2fbf7;
+            --danger: #dc2626;
+            --danger-bg: #fdecec;
+            --warning-bg: #fff9db;
+            --warning-text: #8a5a00;
+            --radius-lg: 12px;
+            --radius: 8px;
+            --radius-pill: 9999px;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-  var bannerHtml = result.pass
-    ? '<div class="result-banner pass">✓ 합격</div>'
-    : '<div class="result-banner fail">✗ 불합격' + (failingNames.length ? ' — 과락 과목: ' + esc(failingNames.join(', ')) : '') + '</div>';
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            letter-spacing: -0.32px;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-  var ungradedNotice = result.ungraded > 0
-    ? '<div class="notice">자가채점이 필요한 서술형 문항이 ' + result.ungraded + '개 있습니다. 아래 문항 리뷰에서 정답/오답을 선택해주세요. 채점 후 점수가 갱신됩니다.</div>'
-    : '';
-  var round14Notice = (mode === 'round' && round === 14)
-    ? '<div class="notice">14회 24번은 시험범위 밖 출제로 전항 정답처리된 문항이라 제외되었습니다.</div>'
-    : '';
+        button {
+            font-family: inherit;
+        }
 
-  var subjectTableHtml = '<div class="table-wrap"><table class="subject-table"><thead><tr>' +
-    '<th>과목</th><th>맞은 수</th><th>총 문항</th><th>정답률</th><th>과락</th></tr></thead><tbody>' +
-    result.subjectResults.map(function(r){
-      return '<tr class="' + (r.failing ? 'fail-row' : '') + '">' +
-        '<td>' + esc(r.subject) + '</td><td>' + r.correct + '</td><td>' + r.total + '</td>' +
-        '<td>' + fmt1(r.pct) + '%</td><td>' + (r.failing ? '과락' : '-') + '</td></tr>';
-    }).join('') + '</tbody></table></div>';
+        h1,
+        h2,
+        h3 {
+            font-family: inherit;
+            margin: 0;
+        }
 
-  var filteredDetails = filter === 'wrong' ? result.details.filter(function(d){ return !d.correct; }) : result.details;
+        p {
+            margin: 0;
+        }
 
-  var reviewHtml = filteredDetails.map(function(d){
-    var q = d.q;
-    var oxHtml = d.correct ? '<span class="ox ox-correct">✓ 정답</span>' : '<span class="ox ox-wrong">✗ 오답</span>';
-    var selfGradeHtml = '';
-    if(q.type !== '객관식'){
-      var sg = s.selfGrades[q.id];
-      selfGradeHtml = '<div class="self-grade"><div class="self-grade-actions">' +
-        '<button type="button" class="btn btn-success small ' + (sg === 'correct' ? 'active' : '') + '" data-sg="correct" data-qid="' + q.id + '">✓ 정답으로 표시</button>' +
-        '<button type="button" class="btn btn-danger small ' + (sg === 'incorrect' ? 'active' : '') + '" data-sg="incorrect" data-qid="' + q.id + '">✗ 오답으로 표시</button>' +
-        '</div></div>';
-    }
-    return '<div class="card review-item">' +
-      '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 ' + oxHtml + '</div>' +
-      '<div class="q-text">' + esc(q.question) + '</div>' +
-      '<div class="review-answers">' +
-        '<div>내 답: ' + esc(d.userAnswerText || '') + (d.userAnswerText ? '' : '미응답') + '</div>' +
-        '<div>정답: ' + esc(q.answer.join(' / ')) + '</div>' +
-      '</div>' +
-      '<div class="explanation-block">' + esc(q.explanation) + '</div>' +
-      selfGradeHtml +
-      '</div>';
-  }).join('');
+        button:focus-visible,
+        a:focus-visible,
+        textarea:focus-visible {
+            outline: 2.5px solid var(--mint-deep);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
 
-  var title = mode === 'mock' ? '모의고사 결과' : (round + '회 결과');
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 16px;
+        }
 
-  app.innerHTML = headerHtml(title) +
-    '<main class="container">' +
-      bannerHtml +
-      '<div class="score-summary">총점 ' + fmt1(result.scorePercent) + '점 (' + result.totalCorrect + ' / ' + result.totalCount + ' 정답)</div>' +
-      round14Notice +
-      ungradedNotice +
-      subjectTableHtml +
-      '<div class="filter-tabs">' +
-        '<button type="button" class="tab-btn ' + (filter==='all'?'active':'') + '" data-filter="all">전체 보기</button>' +
-        '<button type="button" class="tab-btn ' + (filter==='wrong'?'active':'') + '" data-filter="wrong">오답만 보기</button>' +
-      '</div>' +
-      '<div class="review-list">' + (reviewHtml || '<p class="lead">해당하는 문항이 없습니다.</p>') + '</div>' +
-      '<button type="button" class="btn btn-primary full" id="retryBtn">다시 풀기</button>' +
-    '</main>';
+        .app-header {
+            position: sticky;
+            top: 0;
+            background: var(--mint);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            z-index: 10;
+        }
 
-  on('#homeBtn', 'click', function(){ nav('home'); });
-  on('.tab-btn', 'click', function(e){
-    state.reviewFilter = e.currentTarget.getAttribute('data-filter');
-    render();
-  });
-  on('[data-sg]', 'click', function(e){
-    var qid = e.currentTarget.getAttribute('data-qid');
-    var grade = e.currentTarget.getAttribute('data-sg');
-    s.selfGrades[qid] = grade;
-    saveState(key, s);
-    render();
-  });
-  on('#retryBtn', 'click', function(){
-    var msg = mode === 'mock'
-      ? '새 모의고사를 시작합니다. 현재 결과는 새 시험으로 대체됩니다. 계속할까요?'
-      : (round + '회 문제를 다시 풉니다. 진행 기록이 초기화됩니다. 계속할까요?');
-    confirmModal(msg, function(){
-      if(mode === 'mock'){
-        saveState(KEY_MOCK, createMockSession());
-        nav('mockSolve');
-      } else {
-        saveState(KEY_ROUND(round), createRoundSession(round));
-        nav('roundSolve', { round: round });
-      }
-    });
-  });
-}
+        .header-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            max-width: 720px;
+            margin: 0 auto;
+        }
 
-loadQuizData();
-})();
-</script>
+        .header-row h1 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+            flex: 1;
+            color: var(--text);
+        }
+
+        .btn-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 6px 8px;
+            margin: -6px -8px;
+            border-radius: 6px;
+            transition: background-color 160ms var(--ease);
+        }
+
+        .btn-link:hover {
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        .lead {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.6;
+            margin: 16px 0;
+        }
+
+        .mode-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .mode-card {
+            display: block;
+            text-align: left;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            cursor: pointer;
+            width: 100%;
+            transition: border-color 160ms var(--ease), background-color 160ms var(--ease);
+        }
+
+        .mode-card:hover {
+            border-color: var(--mint-deep);
+            background: var(--mint-tint);
+        }
+
+        .mode-card h2 {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+            margin: 0 0 4px;
+        }
+
+        .mode-card p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 50px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.32px;
+            border-radius: var(--radius);
+            border: 1.5px solid transparent;
+            cursor: pointer;
+            transition: background-color 160ms var(--ease), border-color 160ms var(--ease), color 160ms var(--ease);
+        }
+
+        .btn.full {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn.small {
+            min-height: 38px;
+            padding: 6px 14px;
+            font-size: 13px;
+        }
+
+        .btn-primary {
+            background: var(--mint);
+            color: var(--text);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--mint-hover);
+        }
+
+        .btn-primary:disabled {
+            background: var(--surface-sunken);
+            color: var(--text-disabled);
+            cursor: not-allowed;
+        }
+
+        .btn-outline {
+            background: var(--surface);
+            color: var(--text);
+            border-color: var(--border-strong);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg);
+        }
+
+        .btn-outline:disabled {
+            color: var(--text-disabled);
+            border-color: var(--border);
+            cursor: not-allowed;
+        }
+
+        .btn-success {
+            background: var(--mint-tint);
+            color: var(--mint-deep);
+            border-color: var(--mint-tint);
+        }
+
+        .btn-success.active {
+            background: var(--mint-deep);
+            color: #fff;
+            border-color: var(--mint-deep);
+        }
+
+        .btn-danger {
+            background: var(--danger-bg);
+            color: var(--danger);
+            border-color: var(--danger-bg);
+        }
+
+        .btn-danger.active {
+            background: var(--danger);
+            color: #fff;
+            border-color: var(--danger);
+        }
+
+        .btn-danger-outline {
+            background: var(--surface);
+            color: var(--danger);
+            border-color: var(--border);
+        }
+
+        .btn-danger-outline:hover {
+            background: var(--danger-bg);
+            border-color: var(--danger-bg);
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .q-source {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .q-type {
+            background: var(--mint-tint);
+            color: var(--mint-deep);
+            padding: 3px 10px;
+            border-radius: var(--radius-pill);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .q-text {
+            font-size: 17px;
+            line-height: 1.75;
+            margin-bottom: 18px;
+            white-space: pre-wrap;
+        }
+
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .choice-btn {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            width: 100%;
+            text-align: left;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            font-size: 16px;
+            line-height: 1.6;
+            letter-spacing: -0.32px;
+            cursor: pointer;
+            transition: border-color 160ms var(--ease), background-color 160ms var(--ease);
+        }
+
+        .choice-btn:hover:not(:disabled) {
+            border-color: var(--border-strong);
+        }
+
+        .choice-num {
+            flex: 0 0 auto;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--surface-sunken);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            transition: background-color 160ms var(--ease), color 160ms var(--ease);
+        }
+
+        .choice-text {
+            flex: 1;
+            word-break: break-word;
+            padding-top: 1px;
+        }
+
+        .choice-tag {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .choice-btn.selected {
+            border-color: var(--mint-deep);
+            background: var(--mint-tint);
+        }
+
+        .choice-btn.selected .choice-num {
+            background: var(--mint-deep);
+            color: #fff;
+        }
+
+        .choice-btn.correct {
+            border-color: var(--mint-deep);
+            background: var(--mint-tint);
+        }
+
+        .choice-btn.correct .choice-tag {
+            color: var(--mint-deep);
+        }
+
+        .choice-btn.incorrect {
+            border-color: var(--danger);
+            background: var(--danger-bg);
+        }
+
+        .choice-btn.incorrect .choice-tag {
+            color: var(--danger);
+        }
+
+        .choice-btn:disabled {
+            cursor: default;
+        }
+
+        .text-answer {
+            width: 100%;
+            min-height: 96px;
+            padding: 12px 14px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text);
+            border: 1.5px solid var(--border-strong);
+            border-radius: var(--radius);
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 160ms var(--ease);
+        }
+
+        .text-answer:focus {
+            border-color: var(--mint-deep);
+            outline: none;
+        }
+
+        .explanation-block {
+            margin-top: 16px;
+            padding: 14px 16px;
+            background: var(--surface-sunken);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 15px;
+            line-height: 1.75;
+            white-space: pre-wrap;
+        }
+
+        .explanation-answer {
+            font-weight: 700;
+            letter-spacing: -0.32px;
+            margin-bottom: 6px;
+            color: var(--mint-deep);
+        }
+
+        .self-grade {
+            margin-top: 14px;
+        }
+
+        .self-grade p {
+            margin: 0 0 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .self-grade-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .stat-bar {
+            display: flex;
+            gap: 10px;
+            margin: 16px 0 10px;
+        }
+
+        .stat-item {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-num {
+            display: block;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .action-row {
+            margin: 16px 0;
+        }
+
+        .action-row.two-col {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-row.two-col .btn {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .progress-line {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .qnav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
+            gap: 6px;
+            margin: 16px 0;
+        }
+
+        .qnav-btn {
+            aspect-ratio: 1;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text);
+            transition: border-color 160ms var(--ease), background-color 160ms var(--ease);
+        }
+
+        .qnav-btn.answered {
+            background: var(--mint-tint);
+            border-color: var(--mint-deep);
+            color: var(--mint-deep);
+        }
+
+        .qnav-btn.current {
+            border-color: var(--ink);
+            border-width: 2.5px;
+        }
+
+        .round-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .round-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 160ms var(--ease);
+        }
+
+        .round-card:hover {
+            border-color: var(--border-strong);
+        }
+
+        .round-num {
+            font-size: 19px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+        }
+
+        .round-status {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .round-card.status-pass .round-status {
+            color: var(--mint-deep);
+            font-weight: 700;
+        }
+
+        .round-card.status-fail .round-status {
+            color: var(--danger);
+            font-weight: 700;
+        }
+
+        .round-card.status-progress .round-status {
+            color: var(--warning-text);
+            font-weight: 700;
+        }
+
+        @media (min-width:480px) {
+            .round-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .result-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 22px;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+            margin: 16px 0;
+        }
+
+        .result-banner.pass {
+            background: var(--mint);
+            color: var(--text);
+        }
+
+        .result-banner.fail {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .score-summary {
+            font-size: 16px;
+            margin-bottom: 14px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .notice {
+            background: var(--warning-bg);
+            color: var(--warning-text);
+            padding: 12px 14px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            margin-bottom: 14px;
+            line-height: 1.6;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            margin-bottom: 16px;
+        }
+
+        .subject-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 420px;
+        }
+
+        .subject-table th {
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .subject-table th,
+        .subject-table td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .subject-table .fail-row td {
+            color: var(--danger);
+            font-weight: 700;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            margin: 18px 0 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 4px;
+            border-radius: var(--radius);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 9px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            transition: background-color 160ms var(--ease), color 160ms var(--ease);
+        }
+
+        .tab-btn.active {
+            background: var(--mint);
+            color: var(--text);
+        }
+
+        .ox {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: var(--radius-pill);
+        }
+
+        .ox-correct {
+            background: var(--mint-tint);
+            color: var(--mint-deep);
+        }
+
+        .ox-wrong {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .review-answers {
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(20, 22, 30, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 100;
+        }
+
+        .modal-box {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            max-width: 360px;
+            width: 100%;
+        }
+
+        .modal-box p {
+            margin: 0 0 18px;
+            font-size: 15px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-actions .btn {
+            margin-bottom: 0;
+        }
+
+        .icon {
+            display: inline-block;
+            vertical-align: -2px;
+            flex-shrink: 0;
+        }
+
+        .skeleton-list {
+            margin: 20px 0;
+        }
+
+        .skeleton-block {
+            background: linear-gradient(90deg, var(--surface-sunken) 25%, var(--border) 37%, var(--surface-sunken) 63%);
+            background-size: 400% 100%;
+            border-radius: var(--radius-lg);
+            animation: skeleton-pulse 1.4s ease-in-out infinite;
+        }
+
+        .skeleton-lead {
+            height: 20px;
+            width: 70%;
+            margin-bottom: 24px;
+        }
+
+        .skeleton-card {
+            height: 76px;
+            margin-bottom: 10px;
+        }
+
+        @keyframes skeleton-pulse {
+            0% {
+                background-position: 100% 0;
+            }
+
+            100% {
+                background-position: -100% 0;
+            }
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            .skeleton-block {
+                animation: none;
+            }
+        }
+
+        .error-card {
+            text-align: center;
+        }
+
+        .error-card h2 {
+            font-size: 17px;
+            letter-spacing: -0.4px;
+            margin-bottom: 8px;
+        }
+
+        .error-card .lead {
+            margin: 0 0 18px;
+        }
+
+        footer.app-footer {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 12px;
+            padding: 24px 16px 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+    <script>
+        (function () {
+            'use strict';
+
+            var ICON_CHECK = '<svg class="icon" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.3l3.6 3.6L16 6.2"/></svg>';
+            var ICON_X = '<svg class="icon" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 5.5l9 9M14.5 5.5l-9 9"/></svg>';
+            var ICON_CHEVRON_LEFT = '<svg class="icon" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 4.5L6.5 10l6 5.5"/></svg>';
+
+            var SCHEMA_V = 1;
+            var SUBJECT_NAMES = { 1: '데이터 이해', 2: '데이터의 분석 기획', 3: '데이터 분석' };
+            var DATA_URL = 'exam.json';
+            var ROUNDS = [];
+
+            var KEY_INFINITE = 'adsp:infinite';
+            var KEY_MOCK = 'adsp:mock';
+            function KEY_ROUND(r) { return 'adsp:round:' + r; }
+            function ALL_KEYS() {
+                var ks = [KEY_INFINITE, KEY_MOCK];
+                ROUNDS.forEach(function (r) { ks.push(KEY_ROUND(r)); });
+                return ks;
+            }
+
+            /* ---------- data load & preprocessing ---------- */
+            var allQuestions = [];
+            var questionById = {};
+            var poolQuestions = [];
+            var questionsByRound = {};
+
+            function initData(raw) {
+                raw.rounds.forEach(function (r) {
+                    r.subjects.forEach(function (s) {
+                        s.questions.forEach(function (q) {
+                            var excluded = (r.round === 14 && s.subject_no === 3 && q.number === 24);
+                            var globalNumber = s.subject_no === 1 ? q.number : (s.subject_no === 2 ? q.number + 10 : q.number + 20);
+                            allQuestions.push({
+                                id: r.round + '_' + s.subject_no + '_' + q.number,
+                                round: r.round,
+                                subject_no: s.subject_no,
+                                subject: s.subject,
+                                number: q.number,
+                                globalNumber: globalNumber,
+                                question: q.question,
+                                answer: Array.isArray(q.answer) ? q.answer : [q.answer],
+                                explanation: q.explanation,
+                                choices: q.choices || [],
+                                type: q.type,
+                                excluded: excluded
+                            });
+                        });
+                    });
+                });
+                allQuestions.forEach(function (q) { questionById[q.id] = q; });
+                poolQuestions = allQuestions.filter(function (q) { return !q.excluded; });
+                ROUNDS = raw.rounds.map(function (r) { return r.round; }).sort(function (a, b) { return a - b; });
+                ROUNDS.forEach(function (rn) {
+                    questionsByRound[rn] = allQuestions.filter(function (q) { return q.round === rn && !q.excluded; })
+                        .sort(function (a, b) { return a.globalNumber - b.globalNumber; });
+                });
+            }
+
+            function loadQuizData() {
+                state = { screen: 'loading' };
+                render();
+                fetch(DATA_URL, { cache: 'no-cache' }).then(function (res) {
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.json();
+                }).then(function (raw) {
+                    initData(raw);
+                    nav('home');
+                }).catch(function (err) {
+                    state = { screen: 'error' };
+                    render();
+                });
+            }
+
+            /* ---------- storage helpers ---------- */
+            function loadState(key, fallback) {
+                try {
+                    var s = localStorage.getItem(key);
+                    if (!s) return fallback;
+                    var obj = JSON.parse(s);
+                    if (!obj || obj.v !== SCHEMA_V) return fallback;
+                    return obj;
+                } catch (e) { return fallback; }
+            }
+            function saveState(key, obj) {
+                try { localStorage.setItem(key, JSON.stringify(obj)); } catch (e) { /* 저장 없이 진행 */ }
+            }
+            function removeState(key) {
+                try { localStorage.removeItem(key); } catch (e) { /* ignore */ }
+            }
+
+            /* ---------- utils ---------- */
+            function shuffle(arr) {
+                var a = arr.slice();
+                for (var i = a.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var t = a[i]; a[i] = a[j]; a[j] = t;
+                }
+                return a;
+            }
+            function esc(str) {
+                var d = document.createElement('div');
+                d.textContent = (str === null || str === undefined) ? '' : String(str);
+                return d.innerHTML;
+            }
+            function fmt1(n) {
+                return (Math.round(n * 10) / 10).toFixed(1);
+            }
+            function on(sel, evt, handler) {
+                var els = app.querySelectorAll(sel);
+                els.forEach(function (el) { el.addEventListener(evt, handler); });
+            }
+
+            /* ---------- modal ---------- */
+            function confirmModal(message, onYes) {
+                var overlay = document.createElement('div');
+                overlay.className = 'modal-overlay';
+                var box = document.createElement('div');
+                box.className = 'modal-box';
+                var p = document.createElement('p');
+                p.textContent = message;
+                var actions = document.createElement('div');
+                actions.className = 'modal-actions';
+                var cancelBtn = document.createElement('button');
+                cancelBtn.className = 'btn btn-outline';
+                cancelBtn.textContent = '취소';
+                var okBtn = document.createElement('button');
+                okBtn.className = 'btn btn-primary';
+                okBtn.textContent = '확인';
+                actions.appendChild(cancelBtn);
+                actions.appendChild(okBtn);
+                box.appendChild(p);
+                box.appendChild(actions);
+                overlay.appendChild(box);
+                document.body.appendChild(overlay);
+                function close() {
+                    if (overlay.parentNode) document.body.removeChild(overlay);
+                    document.removeEventListener('keydown', onKey);
+                }
+                function onKey(e) { if (e.key === 'Escape') close(); }
+                document.addEventListener('keydown', onKey);
+                cancelBtn.addEventListener('click', close);
+                okBtn.addEventListener('click', function () { close(); onYes(); });
+            }
+
+            /* ---------- app state ---------- */
+            var app = document.getElementById('app');
+            var state = { screen: 'loading' };
+
+            function nav(screen, extra) {
+                state = Object.assign({ screen: screen }, extra || {});
+                render();
+                window.scrollTo(0, 0);
+            }
+
+            function render() {
+                if (state.screen === 'loading') renderLoading();
+                else if (state.screen === 'error') renderError();
+                else if (state.screen === 'home') renderHome();
+                else if (state.screen === 'infinite') renderInfinite();
+                else if (state.screen === 'mockHub') renderMockHub();
+                else if (state.screen === 'mockSolve') renderExamSolve('mock');
+                else if (state.screen === 'mockResult') renderExamResult('mock');
+                else if (state.screen === 'roundHub') renderRoundHub();
+                else if (state.screen === 'roundSolve') renderExamSolve('round');
+                else if (state.screen === 'roundResult') renderExamResult('round');
+            }
+
+            /* ================= LOADING / ERROR ================= */
+            function renderLoading() {
+                app.innerHTML =
+                    headerHtml('ADsP 기출문제 풀이', false) +
+                    '<main class="container">' +
+                    '<div class="skeleton-list" aria-live="polite" aria-busy="true">' +
+                    '<div class="skeleton-block skeleton-lead"></div>' +
+                    '<div class="skeleton-block skeleton-card"></div>' +
+                    '<div class="skeleton-block skeleton-card"></div>' +
+                    '<div class="skeleton-block skeleton-card"></div>' +
+                    '</div>' +
+                    '</main>';
+            }
+            function renderError() {
+                app.innerHTML =
+                    headerHtml('ADsP 기출문제 풀이', false) +
+                    '<main class="container">' +
+                    '<div class="card error-card">' +
+                    '<h2>문제 데이터를 불러오지 못했습니다</h2>' +
+                    '<p class="lead">exam.json을 불러오는 중 문제가 발생했습니다. 네트워크 연결을 확인한 뒤 다시 시도해주세요.</p>' +
+                    '<button type="button" class="btn btn-primary full" id="retryLoadBtn">다시 시도</button>' +
+                    '</div>' +
+                    '</main>';
+                on('#retryLoadBtn', 'click', function () { loadQuizData(); });
+            }
+
+            function headerHtml(title, showHome) {
+                return '<header class="app-header"><div class="header-row">' +
+                    (showHome !== false ? '<button class="btn-link" id="homeBtn">' + ICON_CHEVRON_LEFT + ' 홈</button>' : '<span></span>') +
+                    '<h1>' + esc(title) + '</h1>' +
+                    '</div></header>';
+            }
+
+            /* ================= HOME ================= */
+            function renderHome() {
+                var roundRange = ROUNDS[0] + '~' + ROUNDS[ROUNDS.length - 1] + '회';
+                var excludedCount = allQuestions.length - poolQuestions.length;
+                app.innerHTML =
+                    headerHtml('ADsP 기출문제 풀이') +
+                    '<main class="container">' +
+                    '<p class="lead">' + roundRange + ' ADsP 기출문제 ' + poolQuestions.length + '문항' + (excludedCount ? '(제외 ' + excludedCount + '문항)' : '') + '으로 학습하세요.</p>' +
+                    '<div class="mode-list">' +
+                    '<button type="button" class="mode-card" data-nav="infinite">' +
+                    '<h2>무한 문제 풀이</h2>' +
+                    '<p>전체 문항에서 한 문제씩 랜덤 출제. 정답 확인 후 바로 다음 문제로 넘어갑니다.</p>' +
+                    '</button>' +
+                    '<button type="button" class="mode-card" data-nav="mockHub">' +
+                    '<h2>모의고사</h2>' +
+                    '<p>' + ROUNDS.length + '개 회차 전체에서 과목별로 무작위 추출한 50문항 실전 모의고사.</p>' +
+                    '</button>' +
+                    '<button type="button" class="mode-card" data-nav="roundHub">' +
+                    '<h2>회차별 문제 풀이</h2>' +
+                    '<p>' + roundRange + ' 중 하나를 선택해 해당 회차 문제를 그대로 풀어봅니다.</p>' +
+                    '</button>' +
+                    '</div>' +
+                    '<button type="button" class="btn btn-outline btn-danger-outline full" id="resetAllBtn">전체 기록 초기화</button>' +
+                    '</main>';
+
+                on('[data-nav]', 'click', function (e) { nav(e.currentTarget.getAttribute('data-nav')); });
+                on('#resetAllBtn', 'click', function () {
+                    confirmModal('모든 학습 기록(무한 풀이 통계, 모의고사, 회차별 진행 데이터)이 삭제됩니다. 계속할까요?', function () {
+                        ALL_KEYS().forEach(function (k) { removeState(k); });
+                        nav('home');
+                    });
+                });
+            }
+
+            /* ================= INFINITE MODE ================= */
+            function defaultInfiniteState() {
+                return { v: SCHEMA_V, stats: { solved: 0, correct: 0 }, pool: shuffle(poolQuestions.map(function (q) { return q.id; })), current: null };
+            }
+            function getInfiniteState() {
+                var s = loadState(KEY_INFINITE, null);
+                if (!s) { s = defaultInfiniteState(); saveState(KEY_INFINITE, s); }
+                return s;
+            }
+            function drawNextInfinite(s) {
+                if (s.pool.length === 0) {
+                    s.pool = shuffle(poolQuestions.map(function (q) { return q.id; }));
+                }
+                var id = s.pool.pop();
+                var q = questionById[id];
+                var choiceOrder = q.type === '객관식' ? shuffle(q.choices) : null;
+                s.current = { id: id, choiceOrder: choiceOrder, selectedIndex: null, typed: '', revealed: false, selfGrade: null, graded: false };
+            }
+
+            function renderInfinite() {
+                var s = getInfiniteState();
+                if (!s.current) { drawNextInfinite(s); saveState(KEY_INFINITE, s); }
+                var cur = s.current;
+                var q = questionById[cur.id];
+                var acc = s.stats.solved ? (s.stats.correct / s.stats.solved * 100) : 0;
+
+                var choicesHtml = '';
+                if (q.type === '객관식') {
+                    choicesHtml = cur.choiceOrder.map(function (val, i) {
+                        var cls = 'choice-btn';
+                        var tag = '';
+                        var disabled = '';
+                        if (cur.revealed) {
+                            disabled = 'disabled';
+                            var isAnswer = q.answer.indexOf(val) !== -1;
+                            var isSelected = cur.selectedIndex === i;
+                            if (isAnswer) { cls += ' correct'; tag = '<span class="choice-tag">' + ICON_CHECK + ' 정답</span>'; }
+                            else if (isSelected) { cls += ' incorrect'; tag = '<span class="choice-tag">' + ICON_X + ' 오답</span>'; }
+                        } else if (cur.selectedIndex === i) {
+                            cls += ' selected';
+                        }
+                        return '<button type="button" class="' + cls + '" data-idx="' + i + '" ' + disabled + '>' +
+                            '<span class="choice-num">' + (i + 1) + '</span>' +
+                            '<span class="choice-text">' + esc(val) + '</span>' + tag +
+                            '</button>';
+                    }).join('');
+                } else {
+                    choicesHtml = '<textarea id="typedAnswer" class="text-answer" placeholder="답을 입력하세요"' + (cur.revealed ? ' disabled' : '') + '>' + esc(cur.typed) + '</textarea>';
+                }
+
+                var revealHtml = '';
+                if (cur.revealed) {
+                    revealHtml = '<div class="explanation-block">' +
+                        '<div class="explanation-answer">정답: ' + esc(q.answer.join(' / ')) + '</div>' +
+                        '<div>' + esc(q.explanation) + '</div>' +
+                        '</div>';
+                    if (q.type !== '객관식') {
+                        revealHtml += '<div class="self-grade"><p>내 답을 직접 채점해주세요.</p><div class="self-grade-actions">' +
+                            '<button type="button" class="btn btn-success ' + (cur.selfGrade === 'correct' ? 'active' : '') + '" id="gradeCorrect">' + ICON_CHECK + ' 정답</button>' +
+                            '<button type="button" class="btn btn-danger ' + (cur.selfGrade === 'incorrect' ? 'active' : '') + '" id="gradeIncorrect">' + ICON_X + ' 오답</button>' +
+                            '</div></div>';
+                    }
+                }
+
+                var canCheck = q.type === '객관식' ? cur.selectedIndex !== null : cur.typed.trim().length > 0;
+
+                app.innerHTML =
+                    headerHtml('무한 문제 풀이') +
+                    '<main class="container">' +
+                    '<div class="stat-bar">' +
+                    '<div class="stat-item"><span class="stat-num">' + s.stats.solved + '</span><span class="stat-label">푼 문제 수</span></div>' +
+                    '<div class="stat-item"><span class="stat-num">' + s.stats.correct + '</span><span class="stat-label">맞은 수</span></div>' +
+                    '<div class="stat-item"><span class="stat-num">' + fmt1(acc) + '%</span><span class="stat-label">정답률</span></div>' +
+                    '</div>' +
+                    '<button type="button" class="btn btn-outline small" id="resetInfBtn">기록 초기화</button>' +
+                    '<div class="card question-card">' +
+                    '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 <span class="q-type">' + esc(q.type) + '</span></div>' +
+                    '<div class="q-text">' + esc(q.question) + '</div>' +
+                    '<div class="choices">' + choicesHtml + '</div>' +
+                    revealHtml +
+                    '</div>' +
+                    '<div class="action-row">' +
+                    (!cur.revealed
+                        ? '<button type="button" class="btn btn-primary full" id="checkBtn" ' + (canCheck ? '' : 'disabled') + '>정답 확인</button>'
+                        : '<button type="button" class="btn btn-primary full" id="nextBtn" ' + (cur.graded ? '' : 'disabled') + '>다음 문제</button>') +
+                    '</div>' +
+                    '</main>';
+
+                on('#homeBtn', 'click', function () { nav('home'); });
+                on('#resetInfBtn', 'click', function () {
+                    confirmModal('무한 문제 풀이 통계와 진행 기록을 초기화합니다. 계속할까요?', function () {
+                        saveState(KEY_INFINITE, defaultInfiniteState());
+                        render();
+                    });
+                });
+
+                if (q.type === '객관식') {
+                    on('.choice-btn', 'click', function (e) {
+                        if (cur.revealed) return;
+                        cur.selectedIndex = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
+                        saveState(KEY_INFINITE, s);
+                        render();
+                    });
+                } else {
+                    var ta = document.getElementById('typedAnswer');
+                    if (ta) {
+                        ta.addEventListener('input', function () {
+                            cur.typed = ta.value;
+                            saveState(KEY_INFINITE, s);
+                            var checkBtn = document.getElementById('checkBtn');
+                            if (checkBtn) checkBtn.disabled = cur.typed.trim().length === 0;
+                        });
+                    }
+                }
+
+                on('#checkBtn', 'click', function () {
+                    cur.revealed = true;
+                    if (q.type === '객관식') {
+                        var val = cur.choiceOrder[cur.selectedIndex];
+                        var isCorrect = q.answer.indexOf(val) !== -1;
+                        cur.graded = true;
+                        s.stats.solved += 1;
+                        if (isCorrect) s.stats.correct += 1;
+                    }
+                    saveState(KEY_INFINITE, s);
+                    render();
+                });
+                on('#nextBtn', 'click', function () {
+                    s.current = null;
+                    saveState(KEY_INFINITE, s);
+                    render();
+                });
+                on('#gradeCorrect', 'click', function () {
+                    if (cur.graded) return;
+                    cur.selfGrade = 'correct';
+                    cur.graded = true;
+                    s.stats.solved += 1;
+                    s.stats.correct += 1;
+                    saveState(KEY_INFINITE, s);
+                    render();
+                });
+                on('#gradeIncorrect', 'click', function () {
+                    if (cur.graded) return;
+                    cur.selfGrade = 'incorrect';
+                    cur.graded = true;
+                    s.stats.solved += 1;
+                    saveState(KEY_INFINITE, s);
+                    render();
+                });
+            }
+
+            /* ================= EXAM SESSION (mock & round shared) ================= */
+            function buildChoiceOrders(ids) {
+                var orders = {};
+                ids.forEach(function (id) {
+                    var q = questionById[id];
+                    if (q.type === '객관식') orders[id] = shuffle(q.choices);
+                });
+                return orders;
+            }
+            function emptyMap(ids, val) {
+                var m = {};
+                ids.forEach(function (id) { m[id] = val; });
+                return m;
+            }
+            function createMockSession() {
+                var bySubj = { 1: [], 2: [], 3: [] };
+                poolQuestions.forEach(function (q) { bySubj[q.subject_no].push(q.id); });
+                function pick(arr, n) { return shuffle(arr).slice(0, n); }
+                var ids = pick(bySubj[1], 10).concat(pick(bySubj[2], 10), pick(bySubj[3], 30));
+                return {
+                    v: SCHEMA_V, mode: 'mock', round: null,
+                    questionIds: ids,
+                    choiceOrder: buildChoiceOrders(ids),
+                    answers: emptyMap(ids, null),
+                    selfGrades: emptyMap(ids, null),
+                    submitted: false, currentIndex: 0
+                };
+            }
+            function createRoundSession(round) {
+                var ids = questionsByRound[round].map(function (q) { return q.id; });
+                return {
+                    v: SCHEMA_V, mode: 'round', round: round,
+                    questionIds: ids,
+                    choiceOrder: buildChoiceOrders(ids),
+                    answers: emptyMap(ids, null),
+                    selfGrades: emptyMap(ids, null),
+                    submitted: false, currentIndex: 0
+                };
+            }
+            function isAnswered(val) { return val !== null && val !== undefined && val !== ''; }
+
+            function scoreExam(s) {
+                var ids = s.questionIds;
+                var subjTotals = { 1: { correct: 0, total: 0 }, 2: { correct: 0, total: 0 }, 3: { correct: 0, total: 0 } };
+                var totalCorrect = 0;
+                var ungraded = 0;
+                var details = ids.map(function (id) {
+                    var q = questionById[id];
+                    var correct = false;
+                    var userAnswerText = '';
+                    if (q.type === '객관식') {
+                        var idx = s.answers[id];
+                        if (isAnswered(idx)) {
+                            var val = s.choiceOrder[id][idx];
+                            userAnswerText = val;
+                            correct = q.answer.indexOf(val) !== -1;
+                        }
+                    } else {
+                        userAnswerText = s.answers[id] || '';
+                        var sg = s.selfGrades[id];
+                        if (userAnswerText.trim() && sg === null) ungraded++;
+                        correct = sg === 'correct';
+                    }
+                    subjTotals[q.subject_no].total++;
+                    if (correct) { subjTotals[q.subject_no].correct++; totalCorrect++; }
+                    return { id: id, q: q, correct: correct, userAnswerText: userAnswerText };
+                });
+                var totalCount = ids.length;
+                var scorePercent = totalCount ? (totalCorrect * 100 / totalCount) : 0;
+                var passTotal = totalCorrect * 5 >= totalCount * 3;
+                var subjectResults = [1, 2, 3].map(function (no) {
+                    var t = subjTotals[no];
+                    var pct = t.total ? (t.correct * 100 / t.total) : 0;
+                    var failing = !(t.correct * 5 >= t.total * 2);
+                    return { subject_no: no, subject: SUBJECT_NAMES[no], correct: t.correct, total: t.total, pct: pct, failing: failing };
+                });
+                var anyFailing = subjectResults.some(function (r) { return r.failing; });
+                var pass = passTotal && !anyFailing;
+                return { details: details, subjectResults: subjectResults, totalCorrect: totalCorrect, totalCount: totalCount, scorePercent: scorePercent, pass: pass, anyFailing: anyFailing, ungraded: ungraded };
+            }
+
+            /* ---------- MOCK HUB ---------- */
+            function renderMockHub() {
+                var s = loadState(KEY_MOCK, null);
+                var statusHtml = '<p class="lead">전체 ' + ROUNDS.length + '회차에서 과목별로 무작위 추출한 50문항 모의고사입니다.</p>';
+                var actionsHtml = '';
+                if (!s) {
+                    actionsHtml = '<button type="button" class="btn btn-primary full" id="startMock">모의고사 시작</button>';
+                } else if (!s.submitted) {
+                    var answered = s.questionIds.filter(function (id) { return isAnswered(s.answers[id]); }).length;
+                    statusHtml += '<p>진행 중인 모의고사가 있습니다. (' + answered + '/' + s.questionIds.length + ' 응답)</p>';
+                    actionsHtml = '<button type="button" class="btn btn-primary full" id="resumeMock">이어풀기</button>' +
+                        '<button type="button" class="btn btn-outline full" id="newMock">새 모의고사 시작</button>';
+                } else {
+                    var result = scoreExam(s);
+                    statusHtml += '<p>완료된 모의고사가 있습니다. 총점 ' + fmt1(result.scorePercent) + '점 · ' + (result.pass ? '합격' : '불합격') + '</p>';
+                    actionsHtml = '<button type="button" class="btn btn-primary full" id="viewMockResult">결과 보기</button>' +
+                        '<button type="button" class="btn btn-outline full" id="newMock">새 모의고사 시작</button>';
+                }
+                app.innerHTML = headerHtml('모의고사') + '<main class="container">' + statusHtml + actionsHtml + '</main>';
+
+                on('#homeBtn', 'click', function () { nav('home'); });
+                on('#startMock', 'click', function () {
+                    saveState(KEY_MOCK, createMockSession());
+                    nav('mockSolve');
+                });
+                on('#resumeMock', 'click', function () { nav('mockSolve'); });
+                on('#viewMockResult', 'click', function () { nav('mockResult'); });
+                on('#newMock', 'click', function () {
+                    confirmModal('기존 모의고사 진행 데이터를 덮어씁니다. 새 모의고사를 시작할까요?', function () {
+                        saveState(KEY_MOCK, createMockSession());
+                        nav('mockSolve');
+                    });
+                });
+            }
+
+            /* ---------- ROUND HUB ---------- */
+            function renderRoundHub() {
+                var cards = ROUNDS.map(function (r) {
+                    var s = loadState(KEY_ROUND(r), null);
+                    var total = questionsByRound[r].length;
+                    var statusText, statusClass;
+                    if (!s) { statusText = '미시작'; statusClass = ''; }
+                    else if (!s.submitted) {
+                        var answered = s.questionIds.filter(function (id) { return isAnswered(s.answers[id]); }).length;
+                        statusText = '진행 중 ' + answered + '/' + total;
+                        statusClass = 'status-progress';
+                    } else {
+                        var result = scoreExam(s);
+                        statusText = '완료 · ' + fmt1(result.scorePercent) + '점';
+                        statusClass = result.pass ? 'status-pass' : 'status-fail';
+                    }
+                    return '<button type="button" class="round-card ' + statusClass + '" data-round="' + r + '">' +
+                        '<div class="round-num">' + r + '회</div>' +
+                        '<div class="round-status">' + statusText + '</div>' +
+                        '</button>';
+                }).join('');
+
+                var roundRange = ROUNDS[0] + '~' + ROUNDS[ROUNDS.length - 1] + '회';
+                app.innerHTML = headerHtml('회차별 문제 풀이') +
+                    '<main class="container">' +
+                    '<p class="lead">' + roundRange + ' 중 하나를 선택하세요. (14회는 24번 제외 49문항)</p>' +
+                    '<div class="round-grid">' + cards + '</div>' +
+                    '</main>';
+
+                on('#homeBtn', 'click', function () { nav('home'); });
+                on('.round-card', 'click', function (e) {
+                    var r = parseInt(e.currentTarget.getAttribute('data-round'), 10);
+                    var s = loadState(KEY_ROUND(r), null);
+                    if (!s) {
+                        saveState(KEY_ROUND(r), createRoundSession(r));
+                        nav('roundSolve', { round: r });
+                    } else if (!s.submitted) {
+                        nav('roundSolve', { round: r });
+                    } else {
+                        nav('roundResult', { round: r });
+                    }
+                });
+            }
+
+            /* ---------- EXAM SOLVE (shared) ---------- */
+            function renderExamSolve(mode) {
+                var round = mode === 'round' ? state.round : null;
+                var key = mode === 'mock' ? KEY_MOCK : KEY_ROUND(round);
+                var s = loadState(key, null);
+                if (!s) {
+                    s = mode === 'mock' ? createMockSession() : createRoundSession(round);
+                    saveState(key, s);
+                }
+                var ids = s.questionIds;
+                var idx = Math.max(0, Math.min(s.currentIndex || 0, ids.length - 1));
+                s.currentIndex = idx;
+                var id = ids[idx];
+                var q = questionById[id];
+
+                var bodyHtml = '';
+                if (q.type === '객관식') {
+                    var order = s.choiceOrder[id];
+                    var selIdx = s.answers[id];
+                    bodyHtml = order.map(function (val, i) {
+                        var cls = 'choice-btn' + (selIdx === i ? ' selected' : '');
+                        return '<button type="button" class="' + cls + '" data-idx="' + i + '">' +
+                            '<span class="choice-num">' + (i + 1) + '</span>' +
+                            '<span class="choice-text">' + esc(val) + '</span>' +
+                            '</button>';
+                    }).join('');
+                } else {
+                    var typed = s.answers[id] || '';
+                    bodyHtml = '<textarea id="typedAnswer" class="text-answer" placeholder="답을 입력하세요">' + esc(typed) + '</textarea>';
+                }
+
+                var navGrid = ids.map(function (qid, i) {
+                    var answered = isAnswered(s.answers[qid]);
+                    var cls = 'qnav-btn' + (answered ? ' answered' : '') + (i === idx ? ' current' : '');
+                    return '<button type="button" class="' + cls + '" data-jump="' + i + '">' + (i + 1) + '</button>';
+                }).join('');
+
+                var title = mode === 'mock' ? '모의고사' : (round + '회 회차별 풀이');
+
+                app.innerHTML = headerHtml(title) +
+                    '<main class="container">' +
+                    '<div class="progress-line">' + (idx + 1) + ' / ' + ids.length + '문항</div>' +
+                    '<div class="card question-card">' +
+                    '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 <span class="q-type">' + esc(q.type) + '</span></div>' +
+                    '<div class="q-text">' + esc(q.question) + '</div>' +
+                    '<div class="choices">' + bodyHtml + '</div>' +
+                    '</div>' +
+                    '<div class="action-row two-col">' +
+                    '<button type="button" class="btn btn-outline" id="prevBtn" ' + (idx === 0 ? 'disabled' : '') + '>이전</button>' +
+                    '<button type="button" class="btn btn-outline" id="nextBtn" ' + (idx === ids.length - 1 ? 'disabled' : '') + '>다음</button>' +
+                    '</div>' +
+                    '<div class="qnav-grid">' + navGrid + '</div>' +
+                    '<button type="button" class="btn btn-primary full" id="submitBtn">제출</button>' +
+                    '</main>';
+
+                saveState(key, s);
+
+                on('#homeBtn', 'click', function () { nav('home'); });
+                on('#prevBtn', 'click', function () { s.currentIndex = idx - 1; saveState(key, s); render(); });
+                on('#nextBtn', 'click', function () { s.currentIndex = idx + 1; saveState(key, s); render(); });
+                on('.qnav-btn', 'click', function (e) {
+                    s.currentIndex = parseInt(e.currentTarget.getAttribute('data-jump'), 10);
+                    saveState(key, s);
+                    render();
+                });
+
+                if (q.type === '객관식') {
+                    on('.choice-btn', 'click', function (e) {
+                        s.answers[id] = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
+                        saveState(key, s);
+                        render();
+                    });
+                } else {
+                    var ta = document.getElementById('typedAnswer');
+                    if (ta) {
+                        ta.addEventListener('input', function () {
+                            s.answers[id] = ta.value;
+                            saveState(key, s);
+                            var curBtn = app.querySelector('.qnav-btn.current');
+                            if (curBtn) {
+                                if (ta.value.trim().length > 0) curBtn.classList.add('answered');
+                                else curBtn.classList.remove('answered');
+                            }
+                        });
+                    }
+                }
+
+                on('#submitBtn', 'click', function () {
+                    var unanswered = ids.filter(function (qid) { return !isAnswered(s.answers[qid]); }).length;
+                    var msg = unanswered > 0
+                        ? ('미응답 문항이 ' + unanswered + '개 있습니다. 제출하시겠습니까?')
+                        : '모든 문항에 응답했습니다. 제출하시겠습니까?';
+                    confirmModal(msg, function () {
+                        s.submitted = true;
+                        s.submittedAt = Date.now();
+                        saveState(key, s);
+                        nav(mode === 'mock' ? 'mockResult' : 'roundResult', mode === 'round' ? { round: round } : {});
+                    });
+                });
+            }
+
+            /* ---------- EXAM RESULT (shared) ---------- */
+            function renderExamResult(mode) {
+                var round = mode === 'round' ? state.round : null;
+                var key = mode === 'mock' ? KEY_MOCK : KEY_ROUND(round);
+                var s = loadState(key, null);
+                if (!s || !s.submitted) {
+                    nav(mode === 'mock' ? 'mockHub' : 'roundHub');
+                    return;
+                }
+                var filter = state.reviewFilter || 'all';
+                var result = scoreExam(s);
+                var failingNames = result.subjectResults.filter(function (r) { return r.failing; }).map(function (r) { return r.subject; });
+
+                var bannerHtml = result.pass
+                    ? '<div class="result-banner pass">' + ICON_CHECK + ' 합격</div>'
+                    : '<div class="result-banner fail">' + ICON_X + ' 불합격' + (failingNames.length ? ' — 과락 과목: ' + esc(failingNames.join(', ')) : '') + '</div>';
+
+                var ungradedNotice = result.ungraded > 0
+                    ? '<div class="notice">자가채점이 필요한 서술형 문항이 ' + result.ungraded + '개 있습니다. 아래 문항 리뷰에서 정답/오답을 선택해주세요. 채점 후 점수가 갱신됩니다.</div>'
+                    : '';
+                var round14Notice = (mode === 'round' && round === 14)
+                    ? '<div class="notice">14회 24번은 시험범위 밖 출제로 전항 정답처리된 문항이라 제외되었습니다.</div>'
+                    : '';
+
+                var subjectTableHtml = '<div class="table-wrap"><table class="subject-table"><thead><tr>' +
+                    '<th>과목</th><th>맞은 수</th><th>총 문항</th><th>정답률</th><th>과락</th></tr></thead><tbody>' +
+                    result.subjectResults.map(function (r) {
+                        return '<tr class="' + (r.failing ? 'fail-row' : '') + '">' +
+                            '<td>' + esc(r.subject) + '</td><td>' + r.correct + '</td><td>' + r.total + '</td>' +
+                            '<td>' + fmt1(r.pct) + '%</td><td>' + (r.failing ? '과락' : '-') + '</td></tr>';
+                    }).join('') + '</tbody></table></div>';
+
+                var filteredDetails = filter === 'wrong' ? result.details.filter(function (d) { return !d.correct; }) : result.details;
+
+                var reviewHtml = filteredDetails.map(function (d) {
+                    var q = d.q;
+                    var oxHtml = d.correct ? '<span class="ox ox-correct">' + ICON_CHECK + ' 정답</span>' : '<span class="ox ox-wrong">' + ICON_X + ' 오답</span>';
+                    var selfGradeHtml = '';
+                    if (q.type !== '객관식') {
+                        var sg = s.selfGrades[q.id];
+                        selfGradeHtml = '<div class="self-grade"><div class="self-grade-actions">' +
+                            '<button type="button" class="btn btn-success small ' + (sg === 'correct' ? 'active' : '') + '" data-sg="correct" data-qid="' + q.id + '">' + ICON_CHECK + ' 정답으로 표시</button>' +
+                            '<button type="button" class="btn btn-danger small ' + (sg === 'incorrect' ? 'active' : '') + '" data-sg="incorrect" data-qid="' + q.id + '">' + ICON_X + ' 오답으로 표시</button>' +
+                            '</div></div>';
+                    }
+                    return '<div class="card review-item">' +
+                        '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 ' + oxHtml + '</div>' +
+                        '<div class="q-text">' + esc(q.question) + '</div>' +
+                        '<div class="review-answers">' +
+                        '<div>내 답: ' + esc(d.userAnswerText || '') + (d.userAnswerText ? '' : '미응답') + '</div>' +
+                        '<div>정답: ' + esc(q.answer.join(' / ')) + '</div>' +
+                        '</div>' +
+                        '<div class="explanation-block">' + esc(q.explanation) + '</div>' +
+                        selfGradeHtml +
+                        '</div>';
+                }).join('');
+
+                var title = mode === 'mock' ? '모의고사 결과' : (round + '회 결과');
+
+                app.innerHTML = headerHtml(title) +
+                    '<main class="container">' +
+                    bannerHtml +
+                    '<div class="score-summary">총점 ' + fmt1(result.scorePercent) + '점 (' + result.totalCorrect + ' / ' + result.totalCount + ' 정답)</div>' +
+                    round14Notice +
+                    ungradedNotice +
+                    subjectTableHtml +
+                    '<div class="filter-tabs">' +
+                    '<button type="button" class="tab-btn ' + (filter === 'all' ? 'active' : '') + '" data-filter="all">전체 보기</button>' +
+                    '<button type="button" class="tab-btn ' + (filter === 'wrong' ? 'active' : '') + '" data-filter="wrong">오답만 보기</button>' +
+                    '</div>' +
+                    '<div class="review-list">' + (reviewHtml || '<p class="lead">해당하는 문항이 없습니다.</p>') + '</div>' +
+                    '<button type="button" class="btn btn-primary full" id="retryBtn">다시 풀기</button>' +
+                    '</main>';
+
+                on('#homeBtn', 'click', function () { nav('home'); });
+                on('.tab-btn', 'click', function (e) {
+                    state.reviewFilter = e.currentTarget.getAttribute('data-filter');
+                    render();
+                });
+                on('[data-sg]', 'click', function (e) {
+                    var qid = e.currentTarget.getAttribute('data-qid');
+                    var grade = e.currentTarget.getAttribute('data-sg');
+                    s.selfGrades[qid] = grade;
+                    saveState(key, s);
+                    render();
+                });
+                on('#retryBtn', 'click', function () {
+                    var msg = mode === 'mock'
+                        ? '새 모의고사를 시작합니다. 현재 결과는 새 시험으로 대체됩니다. 계속할까요?'
+                        : (round + '회 문제를 다시 풉니다. 진행 기록이 초기화됩니다. 계속할까요?');
+                    confirmModal(msg, function () {
+                        if (mode === 'mock') {
+                            saveState(KEY_MOCK, createMockSession());
+                            nav('mockSolve');
+                        } else {
+                            saveState(KEY_ROUND(round), createRoundSession(round));
+                            nav('roundSolve', { round: round });
+                        }
+                    });
+                });
+            }
+
+            loadQuizData();
+        })();
+    </script>
 </body>
+
 </html>
