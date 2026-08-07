@@ -1803,7 +1803,10 @@
             /* ---------- MOCK HUB ---------- */
             function renderMockHub() {
                 var s = loadState(KEY_MOCK, null);
-                if (!state.mockRounds) state.mockRounds = ROUNDS.slice();
+                if (!state.mockRounds) {
+                    var defaultRounds = [44, 45, 46, 47, 48, 49].filter(function (r) { return ROUNDS.indexOf(r) !== -1; });
+                    state.mockRounds = defaultRounds.length ? defaultRounds : ROUNDS.slice();
+                }
                 var selRounds = state.mockRounds;
                 var canStart = selRounds.length > 0;
 
