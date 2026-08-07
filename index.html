@@ -1299,6 +1299,7 @@
                 if (state.screen === 'loading') renderLoading();
                 else if (state.screen === 'error') renderError();
                 else if (state.screen === 'home') renderHome();
+                else if (state.screen === 'infiniteHub') renderInfiniteHub();
                 else if (state.screen === 'infinite') renderInfinite();
                 else if (state.screen === 'mockHub') renderMockHub();
                 else if (state.screen === 'mockSolve') renderExamSolve('mock');
@@ -1359,7 +1360,7 @@
                     '<main class="container">' +
                     '<p class="lead">' + roundRange + ' ADsP 기출문제 ' + poolQuestions.length + '문항' + (excludedCount ? '(제외 ' + excludedCount + '문항)' : '') + '으로 학습하세요.</p>' +
                     '<div class="mode-list">' +
-                    '<button type="button" class="mode-card" data-nav="infinite">' +
+                    '<button type="button" class="mode-card" data-nav="infiniteHub">' +
                     '<h2>무한 문제 풀이</h2>' +
                     '<p>전체 문항에서 한 문제씩 랜덤 출제. 정답 확인 후 바로 다음 문제로 넘어갑니다.</p>' +
                     '</button>' +
@@ -1389,29 +1390,112 @@
             }
 
             /* ================= INFINITE MODE ================= */
-            function subjectPoolIds(subjectFilter) {
+            function sameRoundFilter(a, b) {
+                if (a === 'all' || b === 'all') return a === b;
+                if (a.length !== b.length) return false;
+                var sa = a.slice().sort(function (x, y) { return x - y; });
+                var sb = b.slice().sort(function (x, y) { return x - y; });
+                return sa.every(function (v, i) { return v === sb[i]; });
+            }
+            function subjectPoolIds(subjectFilter, roundFilter) {
                 var qs = subjectFilter === 'all' ? poolQuestions : poolQuestions.filter(function (q) { return q.subject_no === subjectFilter; });
+                if (roundFilter && roundFilter !== 'all') {
+                    qs = qs.filter(function (q) { return roundFilter.indexOf(q.round) !== -1; });
+                }
                 return qs.map(function (q) { return q.id; });
             }
-            function defaultInfiniteState(subjectFilter) {
+            function defaultInfiniteState(subjectFilter, roundFilter) {
                 subjectFilter = subjectFilter || 'all';
-                return { v: SCHEMA_V, subjectFilter: subjectFilter, stats: { solved: 0, correct: 0 }, history: [], pool: shuffle(subjectPoolIds(subjectFilter)), current: null };
+                roundFilter = roundFilter || 'all';
+                return { v: SCHEMA_V, subjectFilter: subjectFilter, roundFilter: roundFilter, stats: { solved: 0, correct: 0 }, history: [], pool: shuffle(subjectPoolIds(subjectFilter, roundFilter)), current: null };
             }
             function getInfiniteState() {
                 var s = loadState(KEY_INFINITE, null);
                 if (!s) { s = defaultInfiniteState(); saveState(KEY_INFINITE, s); }
                 if (!s.subjectFilter) s.subjectFilter = 'all';
+                if (!s.roundFilter) s.roundFilter = 'all';
                 if (!s.history) s.history = [];
                 return s;
             }
             function drawNextInfinite(s) {
                 if (s.pool.length === 0) {
-                    s.pool = shuffle(subjectPoolIds(s.subjectFilter));
+                    s.pool = shuffle(subjectPoolIds(s.subjectFilter, s.roundFilter));
                 }
                 var id = s.pool.pop();
                 var q = questionById[id];
                 var choiceOrder = q.type === '객관식' ? shuffle(q.choices) : null;
                 s.current = { id: id, choiceOrder: choiceOrder, selectedIndex: null, typed: '', revealed: false, selfGrade: null, graded: false };
+            }
+
+            /* ---------- INFINITE HUB ---------- */
+            function renderInfiniteHub() {
+                var saved = loadState(KEY_INFINITE, null);
+                if (!state.infSubjectPick) state.infSubjectPick = saved ? saved.subjectFilter : 'all';
+                if (!state.infRoundPick) state.infRoundPick = (saved && saved.roundFilter !== 'all') ? saved.roundFilter.slice() : ROUNDS.slice();
+                var subjectPick = state.infSubjectPick;
+                var roundPick = state.infRoundPick;
+                var canStart = roundPick.length > 0;
+                var newRoundFilter = roundPick.length === ROUNDS.length ? 'all' : roundPick.slice();
+                var matchesSaved = !!saved && saved.subjectFilter === subjectPick && sameRoundFilter(saved.roundFilter, newRoundFilter);
+
+                var subjectTabsHtml = '<div class="filter-tabs">' +
+                    '<button type="button" class="tab-btn ' + (subjectPick === 'all' ? 'active' : '') + '" data-subject="all">전체</button>' +
+                    '<button type="button" class="tab-btn ' + (subjectPick === 1 ? 'active' : '') + '" data-subject="1">데이터 이해</button>' +
+                    '<button type="button" class="tab-btn ' + (subjectPick === 2 ? 'active' : '') + '" data-subject="2">분석 기획</button>' +
+                    '<button type="button" class="tab-btn ' + (subjectPick === 3 ? 'active' : '') + '" data-subject="3">데이터 분석</button>' +
+                    '</div>';
+
+                var pickerHtml = '<div class="round-toggle-header"><span>출제 회차 선택</span>' +
+                    '<button type="button" class="btn-link" id="toggleAllInfRoundsBtn">' + (roundPick.length === ROUNDS.length ? '전체 해제' : '전체 선택') + '</button></div>' +
+                    '<div class="round-grid">' + ROUNDS.map(function (r) {
+                        var active = roundPick.indexOf(r) !== -1;
+                        return '<button type="button" class="round-card round-pick' + (active ? ' selected' : '') + '" data-round="' + r + '">' +
+                            '<div class="round-num">' + r + '회</div>' +
+                            '<div class="round-status">' + (active ? '선택됨' : '미선택') + '</div>' +
+                            '</button>';
+                    }).join('') + '</div>';
+
+                var statusHtml = '<p class="lead">회차와 과목을 선택하면 그 범위에서 한 문제씩 무작위로 출제됩니다.</p>';
+                if (!canStart) statusHtml += '<div class="notice">회차를 1개 이상 선택해주세요.</div>';
+                if (matchesSaved && saved.stats.solved > 0) {
+                    var acc = saved.stats.solved ? (saved.stats.correct / saved.stats.solved * 100) : 0;
+                    statusHtml += '<p>진행 중인 기록이 있습니다. (' + saved.stats.solved + '문제 · 정답률 ' + fmt1(acc) + '%)</p>';
+                }
+
+                var actionsHtml = '<button type="button" class="btn btn-primary full" id="startInfinite" ' + (canStart ? '' : 'disabled') + '>' +
+                    (matchesSaved ? '이어풀기' : '시작하기') + '</button>';
+
+                app.innerHTML = headerHtml('무한 문제 풀이') + '<main class="container">' + subjectTabsHtml + pickerHtml + statusHtml + actionsHtml + '</main>';
+
+                on('#homeBtn', 'click', function () { nav('home'); });
+                on('#backBtn', 'click', function () { navBack(); });
+                on('.tab-btn', 'click', function (e) {
+                    var val = e.currentTarget.getAttribute('data-subject');
+                    state.infSubjectPick = val === 'all' ? 'all' : parseInt(val, 10);
+                    render();
+                });
+                on('.round-pick', 'click', function (e) {
+                    var r = parseInt(e.currentTarget.getAttribute('data-round'), 10);
+                    var idx = state.infRoundPick.indexOf(r);
+                    if (idx === -1) state.infRoundPick.push(r); else state.infRoundPick.splice(idx, 1);
+                    render();
+                });
+                on('#toggleAllInfRoundsBtn', 'click', function () {
+                    state.infRoundPick = state.infRoundPick.length === ROUNDS.length ? [] : ROUNDS.slice();
+                    render();
+                });
+                on('#startInfinite', 'click', function () {
+                    if (matchesSaved) { nav('infinite'); return; }
+                    function go() {
+                        saveState(KEY_INFINITE, defaultInfiniteState(subjectPick, newRoundFilter));
+                        nav('infinite');
+                    }
+                    if (saved && saved.stats.solved > 0) {
+                        confirmModal('선택을 변경하면 현재 무한 풀이 통계와 진행 기록이 초기화됩니다. 계속할까요?', go);
+                    } else {
+                        go();
+                    }
+                });
             }
 
             function renderInfinite() {
@@ -1462,16 +1546,14 @@
                 var canCheck = q.type === '객관식' ? cur.selectedIndex !== null : cur.typed.trim().length > 0;
                 var subjectFilter = s.subjectFilter;
                 var wrongCount = s.stats.solved - s.stats.correct;
+                var subjectLabel = subjectFilter === 'all' ? '전체 과목' : SUBJECT_NAMES[subjectFilter];
+                var roundFilterLabel = s.roundFilter === 'all' ? (ROUNDS[0] + '~' + ROUNDS[ROUNDS.length - 1] + '회 전체') : (s.roundFilter.length + '개 회차');
 
                 app.innerHTML =
                     headerHtml('무한 문제 풀이') +
                     '<main class="container">' +
-                    '<div class="filter-tabs">' +
-                    '<button type="button" class="tab-btn ' + (subjectFilter === 'all' ? 'active' : '') + '" data-subject="all">전체</button>' +
-                    '<button type="button" class="tab-btn ' + (subjectFilter === 1 ? 'active' : '') + '" data-subject="1">데이터 이해</button>' +
-                    '<button type="button" class="tab-btn ' + (subjectFilter === 2 ? 'active' : '') + '" data-subject="2">분석 기획</button>' +
-                    '<button type="button" class="tab-btn ' + (subjectFilter === 3 ? 'active' : '') + '" data-subject="3">데이터 분석</button>' +
-                    '</div>' +
+                    '<div class="round-toggle-header"><span>' + subjectLabel + ' · ' + roundFilterLabel + '</span>' +
+                    '<button type="button" class="btn-link" id="changeInfSettingsBtn">설정 변경</button></div>' +
                     '<div class="stat-bar">' +
                     '<div class="stat-item"><span class="stat-num">' + s.stats.solved + '</span><span class="stat-label">푼 문제 수</span></div>' +
                     '<div class="stat-item' + (s.stats.correct > 0 ? ' clickable" data-list="correct"' : '"') + '><span class="stat-num">' + s.stats.correct + '</span><span class="stat-label">맞은 수</span></div>' +
@@ -1500,20 +1582,12 @@
                 on('#backBtn', 'click', function () { navBack(); });
                 on('#resetInfBtn', 'click', function () {
                     confirmModal('무한 문제 풀이 통계와 진행 기록을 초기화합니다. 계속할까요?', function () {
-                        saveState(KEY_INFINITE, defaultInfiniteState(s.subjectFilter));
+                        saveState(KEY_INFINITE, defaultInfiniteState(s.subjectFilter, s.roundFilter));
                         render();
                     });
                 });
                 on('#endInfBtn', 'click', function () { nav('infiniteSummary'); });
-                on('.tab-btn', 'click', function (e) {
-                    var val = e.currentTarget.getAttribute('data-subject');
-                    var newFilter = val === 'all' ? 'all' : parseInt(val, 10);
-                    if (newFilter === s.subjectFilter) return;
-                    confirmModal('과목을 변경하면 현재 무한 풀이 통계와 진행 기록이 초기화됩니다. 계속할까요?', function () {
-                        saveState(KEY_INFINITE, defaultInfiniteState(newFilter));
-                        render();
-                    });
-                });
+                on('#changeInfSettingsBtn', 'click', function () { nav('infiniteHub'); });
                 on('.stat-item.clickable', 'click', function (e) {
                     nav('infiniteList', { listFilter: e.currentTarget.getAttribute('data-list') });
                 });
@@ -1669,7 +1743,7 @@
                 on('#continueInfBtn', 'click', function () { nav('infinite'); });
                 on('#restartInfBtn', 'click', function () {
                     confirmModal('무한 문제 풀이 통계와 진행 기록을 초기화합니다. 계속할까요?', function () {
-                        saveState(KEY_INFINITE, defaultInfiniteState(s.subjectFilter));
+                        saveState(KEY_INFINITE, defaultInfiniteState(s.subjectFilter, s.roundFilter));
                         nav('infinite');
                     });
                 });
