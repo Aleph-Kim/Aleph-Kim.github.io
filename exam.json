@@ -6973,6 +6973,7 @@
       "round": 44,
       "subjects": [
         {
+          "subject_no": 1,
           "subject": "데이터 이해",
           "questions": [
             {
@@ -7108,6 +7109,7 @@
           ]
         },
         {
+          "subject_no": 2,
           "subject": "데이터 분석 기획",
           "questions": [
             {
@@ -7205,6 +7207,7 @@
           ]
         },
         {
+          "subject_no": 3,
           "subject": "데이터 분석",
           "questions": [
             {
@@ -7572,6 +7575,7 @@
       "round": 45,
       "subjects": [
         {
+          "subject_no": 1,
           "subject": "데이터 이해",
           "questions": [
             {
@@ -7707,6 +7711,7 @@
           ]
         },
         {
+          "subject_no": 2,
           "subject": "데이터 분석 기획",
           "questions": [
             {
@@ -7844,6 +7849,7 @@
           ]
         },
         {
+          "subject_no": 3,
           "subject": "데이터 분석",
           "questions": [
             {
@@ -8220,6 +8226,7 @@
       "round": 46,
       "subjects": [
         {
+          "subject_no": 1,
           "subject": "데이터 이해",
           "questions": [
             {
@@ -8358,6 +8365,7 @@
           ]
         },
         {
+          "subject_no": 2,
           "subject": "데이터 분석 기획",
           "questions": [
             {
@@ -8495,6 +8503,7 @@
           ]
         },
         {
+          "subject_no": 3,
           "subject": "데이터 분석",
           "questions": [
             {
@@ -10220,6 +10229,7 @@
       "round": 49,
       "subjects": [
         {
+          "subject_no": 1,
           "subject": "데이터 이해",
           "questions": [
             {
@@ -10357,6 +10367,7 @@
           ]
         },
         {
+          "subject_no": 2,
           "subject": "데이터 분석 기획",
           "questions": [
             {
@@ -10493,6 +10504,7 @@
           ]
         },
         {
+          "subject_no": 3,
           "subject": "데이터 분석",
           "questions": [
             {
