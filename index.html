@@ -327,6 +327,70 @@
             white-space: pre-wrap;
         }
 
+        .q-reference {
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            background: var(--surface-sunken);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
+            line-height: 1.65;
+            color: var(--text-muted);
+        }
+
+        .q-reference p {
+            margin: 0 0 8px;
+            white-space: pre-wrap;
+        }
+
+        .q-reference p:last-child {
+            margin-bottom: 0;
+        }
+
+        .q-reference .ref-code {
+            margin: 0 0 8px;
+            padding: 10px 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow-x: auto;
+            font-size: 13px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        }
+
+        .q-reference .ref-table-wrap {
+            margin: 0 0 8px;
+            overflow-x: auto;
+        }
+
+        .q-reference .ref-table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 13px;
+        }
+
+        .q-reference .ref-table th,
+        .q-reference .ref-table td {
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .q-reference .ref-table th {
+            background: var(--surface);
+            font-weight: 700;
+        }
+
+        .q-reference .ref-list {
+            margin: 0 0 8px;
+            padding-left: 20px;
+        }
+
+        .q-reference .ref-list:last-child {
+            margin-bottom: 0;
+        }
+
         .choices {
             display: flex;
             flex-direction: column;
@@ -956,6 +1020,7 @@
                                 explanation: q.explanation,
                                 choices: q.choices || [],
                                 type: q.type,
+                                reference: q.reference,
                                 excluded: excluded
                             });
                         });
@@ -1018,6 +1083,52 @@
             }
             function fmt1(n) {
                 return (Math.round(n * 10) / 10).toFixed(1);
+            }
+            function renderRefMd(md) {
+                if (!md) return '';
+                var lines = String(md).split('\n');
+                var html = '';
+                var i = 0;
+                while (i < lines.length) {
+                    var line = lines[i];
+                    if (/^```/.test(line)) {
+                        i++;
+                        var codeLines = [];
+                        while (i < lines.length && !/^```/.test(lines[i])) { codeLines.push(lines[i]); i++; }
+                        i++;
+                        html += '<pre class="ref-code"><code>' + esc(codeLines.join('\n')) + '</code></pre>';
+                        continue;
+                    }
+                    if (/^\|.*\|\s*$/.test(line) && i + 1 < lines.length && /^\|[\s:|-]+\|\s*$/.test(lines[i + 1])) {
+                        var headerCells = line.split('|').slice(1, -1).map(function (c) { return c.trim(); });
+                        i += 2;
+                        var rows = [];
+                        while (i < lines.length && /^\|.*\|\s*$/.test(lines[i])) {
+                            rows.push(lines[i].split('|').slice(1, -1).map(function (c) { return c.trim(); }));
+                            i++;
+                        }
+                        html += '<div class="ref-table-wrap"><table class="ref-table"><thead><tr>' +
+                            headerCells.map(function (c) { return '<th>' + esc(c) + '</th>'; }).join('') +
+                            '</tr></thead><tbody>' +
+                            rows.map(function (r) { return '<tr>' + r.map(function (c) { return '<td>' + esc(c) + '</td>'; }).join('') + '</tr>'; }).join('') +
+                            '</tbody></table></div>';
+                        continue;
+                    }
+                    if (/^-\s+/.test(line)) {
+                        var items = [];
+                        while (i < lines.length && /^-\s+/.test(lines[i])) { items.push(lines[i].replace(/^-\s+/, '')); i++; }
+                        html += '<ul class="ref-list">' + items.map(function (it) { return '<li>' + esc(it) + '</li>'; }).join('') + '</ul>';
+                        continue;
+                    }
+                    if (line.trim() === '') { i++; continue; }
+                    var paraLines = [];
+                    while (i < lines.length && lines[i].trim() !== '' && !/^```/.test(lines[i]) && !/^\|.*\|\s*$/.test(lines[i]) && !/^-\s+/.test(lines[i])) {
+                        paraLines.push(lines[i]);
+                        i++;
+                    }
+                    html += '<p>' + esc(paraLines.join('\n')).replace(/\n/g, '<br>') + '</p>';
+                }
+                return html;
             }
             function on(sel, evt, handler) {
                 var els = app.querySelectorAll(sel);
@@ -1252,6 +1363,7 @@
                     '<div class="card question-card">' +
                     '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 <span class="q-type">' + esc(q.type) + '</span></div>' +
                     '<div class="q-text">' + esc(q.question) + '</div>' +
+                    (q.reference ? '<div class="q-reference">' + renderRefMd(q.reference) + '</div>' : '') +
                     '<div class="choices">' + choicesHtml + '</div>' +
                     revealHtml +
                     '</div>' +
@@ -1379,6 +1491,7 @@
                     return '<div class="card review-item">' +
                         '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 ' + oxHtml + '</div>' +
                         '<div class="q-text">' + esc(q.question) + '</div>' +
+                        (q.reference ? '<div class="q-reference">' + renderRefMd(q.reference) + '</div>' : '') +
                         answerHtml +
                         '<div class="explanation-block">' + esc(q.explanation) + '</div>' +
                         '</div>';
@@ -1678,6 +1791,7 @@
                     '<div class="card question-card">' +
                     '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 <span class="q-type">' + esc(q.type) + '</span></div>' +
                     '<div class="q-text">' + esc(q.question) + '</div>' +
+                    (q.reference ? '<div class="q-reference">' + renderRefMd(q.reference) + '</div>' : '') +
                     '<div class="choices">' + bodyHtml + '</div>' +
                     '</div>' +
                     '<div class="action-row two-col">' +
@@ -1822,6 +1936,7 @@
                     return '<div class="card review-item">' +
                         '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 ' + oxHtml + guessHtml + '</div>' +
                         '<div class="q-text">' + esc(q.question) + '</div>' +
+                        (q.reference ? '<div class="q-reference">' + renderRefMd(q.reference) + '</div>' : '') +
                         answerHtml +
                         '<div class="explanation-block">' + esc(q.explanation) + '</div>' +
                         selfGradeHtml +
@@ -1887,6 +2002,7 @@
                     return '<div class="card review-item">' +
                         '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번</div>' +
                         '<div class="q-text">' + esc(q.question) + '</div>' +
+                        (q.reference ? '<div class="q-reference">' + renderRefMd(q.reference) + '</div>' : '') +
                         '<div class="review-answers">' +
                         '<div>내 답: ' + esc(d.userAnswerText || '') + (d.userAnswerText ? '' : '미응답') + '</div>' +
                         '<div>정답: ' + esc(q.answer.join(' / ')) + '</div>' +
