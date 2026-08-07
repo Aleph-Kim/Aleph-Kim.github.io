@@ -115,13 +115,25 @@
             font-weight: 700;
             letter-spacing: -0.4px;
             flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             color: #fff;
+        }
+
+        .header-row h1.header-page {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
         }
 
         .btn-link {
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            flex: 0 0 auto;
+            white-space: nowrap;
             background: none;
             border: none;
             color: #fff;
@@ -132,6 +144,10 @@
             margin: -6px -8px;
             border-radius: 6px;
             transition: background-color 160ms var(--ease);
+        }
+
+        .header-row .btn-link#homeBtn {
+            font-size: 18px;
         }
 
         @media (hover:hover) and (pointer:fine) {
@@ -1225,9 +1241,20 @@
             /* ---------- app state ---------- */
             var app = document.getElementById('app');
             var state = { screen: 'loading' };
+            var navHistory = [];
 
             function nav(screen, extra) {
+                if (state.screen !== 'loading' && state.screen !== 'error' && state.screen !== screen) {
+                    navHistory.push(state);
+                }
                 state = Object.assign({ screen: screen }, extra || {});
+                render();
+                window.scrollTo(0, 0);
+            }
+
+            function navBack() {
+                if (navHistory.length === 0) { nav('home'); return; }
+                state = navHistory.pop();
                 render();
                 window.scrollTo(0, 0);
             }
@@ -1253,7 +1280,7 @@
             /* ================= LOADING / ERROR ================= */
             function renderLoading() {
                 app.innerHTML =
-                    headerHtml('ADsP 기출문제 풀이', false) +
+                    headerHtml('ADsP 기출문제 풀이') +
                     '<main class="container">' +
                     '<div class="skeleton-list" aria-live="polite" aria-busy="true">' +
                     '<div class="skeleton-block skeleton-lead"></div>' +
@@ -1265,7 +1292,7 @@
             }
             function renderError() {
                 app.innerHTML =
-                    headerHtml('ADsP 기출문제 풀이', false) +
+                    headerHtml('ADsP 기출문제 풀이') +
                     '<main class="container">' +
                     '<div class="card error-card">' +
                     '<h2>문제 데이터를 불러오지 못했습니다</h2>' +
@@ -1276,10 +1303,14 @@
                 on('#retryLoadBtn', 'click', function () { loadQuizData(); });
             }
 
-            function headerHtml(title, showHome) {
+            function headerHtml(pageTitle) {
+                if (pageTitle === 'ADsP 기출문제 풀이') {
+                    return '<header class="app-header"><div class="header-row"><h1>ADsP 기출문제 풀이</h1></div></header>';
+                }
                 return '<header class="app-header"><div class="header-row">' +
-                    (showHome !== false ? '<button class="btn-link" id="homeBtn">' + ICON_CHEVRON_LEFT + ' 홈</button>' : '<span></span>') +
-                    '<h1>' + esc(title) + '</h1>' +
+                    '<button type="button" class="btn-link" id="backBtn">' + ICON_CHEVRON_LEFT + ' 이전</button>' +
+                    '<button type="button" class="btn-link" id="homeBtn">ADsP 기출문제 풀이</button>' +
+                    '<h1 class="header-page">' + esc(pageTitle) + '</h1>' +
                     '</div></header>';
             }
 
@@ -1430,6 +1461,7 @@
                     '</main>';
 
                 on('#homeBtn', 'click', function () { nav('home'); });
+                on('#backBtn', 'click', function () { navBack(); });
                 on('#resetInfBtn', 'click', function () {
                     confirmModal('무한 문제 풀이 통계와 진행 기록을 초기화합니다. 계속할까요?', function () {
                         saveState(KEY_INFINITE, defaultInfiniteState(s.subjectFilter));
@@ -1558,6 +1590,7 @@
                     '</main>';
 
                 on('#homeBtn', 'click', function () { nav('home'); });
+                on('#backBtn', 'click', function () { navBack(); });
             }
 
             function renderInfiniteSummary() {
@@ -1590,6 +1623,7 @@
                     '</main>';
 
                 on('#homeBtn', 'click', function () { nav('home'); });
+                on('#backBtn', 'click', function () { navBack(); });
                 on('.stat-item.clickable', 'click', function (e) {
                     nav('infiniteList', {
                         listFilter: e.currentTarget.getAttribute('data-list'),
@@ -1737,6 +1771,7 @@
                 app.innerHTML = headerHtml('모의고사') + '<main class="container">' + statusHtml + actionsHtml + '</main>';
 
                 on('#homeBtn', 'click', function () { nav('home'); });
+                on('#backBtn', 'click', function () { navBack(); });
                 on('#startMock', 'click', function () {
                     saveState(KEY_MOCK, createMockSession());
                     nav('mockSolve');
@@ -1781,6 +1816,7 @@
                     '</main>';
 
                 on('#homeBtn', 'click', function () { nav('home'); });
+                on('#backBtn', 'click', function () { navBack(); });
                 on('.round-card', 'click', function (e) {
                     var r = parseInt(e.currentTarget.getAttribute('data-round'), 10);
                     var s = loadState(KEY_ROUND(r), null);
@@ -1860,6 +1896,7 @@
                 saveState(key, s);
 
                 on('#homeBtn', 'click', function () { nav('home'); });
+                on('#backBtn', 'click', function () { navBack(); });
                 on('#prevBtn', 'click', function () { s.currentIndex = idx - 1; saveState(key, s); render(); window.scrollTo(0, 0); });
                 on('#nextBtn', 'click', function () { s.currentIndex = idx + 1; saveState(key, s); render(); window.scrollTo(0, 0); });
                 on('.qnav-btn', 'click', function (e) {
@@ -2017,6 +2054,7 @@
                     '</main>';
 
                 on('#homeBtn', 'click', function () { nav('home'); });
+                on('#backBtn', 'click', function () { navBack(); });
                 on('.tab-btn', 'click', function (e) {
                     state.reviewFilter = e.currentTarget.getAttribute('data-filter');
                     render();
@@ -2090,6 +2128,7 @@
                     '</main>';
 
                 on('#homeBtn', 'click', function () { nav('home'); });
+                on('#backBtn', 'click', function () { navBack(); });
                 on('#startWrong', 'click', function () {
                     saveState(KEY_WRONG, createWrongSession(ids));
                     nav('wrongSolve');
