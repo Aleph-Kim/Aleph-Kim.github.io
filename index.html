@@ -815,6 +815,13 @@
             font-weight: 700;
         }
 
+        .solve-time-line {
+            font-size: 13px;
+            margin: -8px 0 14px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
         .notice {
             background: var(--warning-bg);
             color: var(--warning-text);
@@ -1191,6 +1198,15 @@
             function fmt1(n) {
                 return (Math.round(n * 10) / 10).toFixed(1);
             }
+            function fmtDuration(ms) {
+                var totalSec = Math.max(0, Math.floor(ms / 1000));
+                var h = Math.floor(totalSec / 3600);
+                var m = Math.floor((totalSec % 3600) / 60);
+                var sec = totalSec % 60;
+                var mm = (h > 0 && m < 10 ? '0' : '') + m;
+                var ss = (sec < 10 ? '0' : '') + sec;
+                return (h > 0 ? h + ':' : '') + mm + ':' + ss;
+            }
             function renderRefMd(md) {
                 if (!md) return '';
                 var lines = String(md).split('\n');
@@ -1278,6 +1294,7 @@
             var app = document.getElementById('app');
             var state = { screen: 'loading' };
             var navHistory = [];
+            var examTimerHandle = null;
 
             function nav(screen, extra) {
                 if (state.screen !== 'loading' && state.screen !== 'error' && state.screen !== screen) {
@@ -1296,6 +1313,7 @@
             }
 
             function render() {
+                if (examTimerHandle) { clearInterval(examTimerHandle); examTimerHandle = null; }
                 if (state.screen === 'loading') renderLoading();
                 else if (state.screen === 'error') renderError();
                 else if (state.screen === 'home') renderHome();
@@ -1778,7 +1796,7 @@
                     answers: emptyMap(ids, null),
                     selfGrades: emptyMap(ids, null),
                     guessed: emptyMap(ids, false),
-                    submitted: false, currentIndex: 0
+                    submitted: false, currentIndex: 0, startedAt: Date.now()
                 };
             }
             function createRoundSession(round) {
@@ -1790,7 +1808,7 @@
                     answers: emptyMap(ids, null),
                     selfGrades: emptyMap(ids, null),
                     guessed: emptyMap(ids, false),
-                    submitted: false, currentIndex: 0
+                    submitted: false, currentIndex: 0, startedAt: Date.now()
                 };
             }
             function createWrongSession(ids) {
@@ -1993,6 +2011,7 @@
                     saveState(key, s);
                 }
                 if (!s.guessed) s.guessed = emptyMap(s.questionIds, false);
+                if (mode !== 'wrong' && !s.startedAt) s.startedAt = Date.now();
                 var ids = s.questionIds;
                 var idx = Math.max(0, Math.min(s.currentIndex || 0, ids.length - 1));
                 s.currentIndex = idx;
@@ -2028,9 +2047,11 @@
 
                 var title = mode === 'mock' ? '모의고사' : (mode === 'round' ? (round + '회 회차별 풀이') : '틀린 문제 다시 풀기');
 
+                var timerHtml = mode !== 'wrong' ? ' · <span id="examTimer">' + fmtDuration(Date.now() - s.startedAt) + '</span>' : '';
+
                 app.innerHTML = headerHtml(title) +
                     '<main class="container exam-container">' +
-                    '<div class="progress-line">' + (idx + 1) + ' / ' + ids.length + '문항</div>' +
+                    '<div class="progress-line">' + (idx + 1) + ' / ' + ids.length + '문항' + timerHtml + '</div>' +
                     '<div class="card question-card">' +
                     '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 <span class="q-type">' + esc(q.type) + '</span></div>' +
                     '<div class="q-text">' + esc(q.question) + '</div>' +
@@ -2046,6 +2067,13 @@
                     '</main>';
 
                 saveState(key, s);
+
+                if (mode !== 'wrong') {
+                    examTimerHandle = setInterval(function () {
+                        var el = document.getElementById('examTimer');
+                        if (el) el.textContent = fmtDuration(Date.now() - s.startedAt);
+                    }, 1000);
+                }
 
                 on('#homeBtn', 'click', function () { nav('home'); });
                 on('#backBtn', 'click', function () { navBack(); });
@@ -2188,11 +2216,14 @@
                 }).join('');
 
                 var title = mode === 'mock' ? '모의고사 결과' : (mode === 'round' ? (round + '회 결과') : '틀린 문제 다시 풀기 결과');
+                var solveTimeHtml = (mode !== 'wrong' && s.startedAt && s.submittedAt)
+                    ? '<div class="solve-time-line">풀이 시간 ' + fmtDuration(s.submittedAt - s.startedAt) + '</div>' : '';
 
                 app.innerHTML = headerHtml(title) +
                     '<main class="container">' +
                     bannerHtml +
                     '<div class="score-summary">총점 ' + fmt1(result.scorePercent) + '점 (' + result.totalCorrect + ' / ' + result.totalCount + ' 정답)</div>' +
+                    solveTimeHtml +
                     round14Notice +
                     ungradedNotice +
                     subjectTableHtml +
