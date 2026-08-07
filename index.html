@@ -17,19 +17,19 @@
         }
 
         :root {
-            --bg: #f3f4f5;
+            --bg: #f5f6f7;
             --surface: #ffffff;
-            --surface-sunken: #f6f6f6;
-            --border: #e4e5e7;
-            --border-strong: #a6a7a9;
-            --text: #232324;
-            --text-muted: #6c6d6f;
-            --text-disabled: #cccccc;
+            --surface-sunken: #f0f2f5;
+            --border: #f0f2f5;
+            --border-strong: #9fa4b0;
+            --text: #111111;
+            --text-muted: #555c68;
+            --text-disabled: #9fa4b0;
             --ink: #000000;
-            --mint: #0cefd3;
-            --mint-hover: #0ad9c0;
-            --mint-deep: #0a7b6e;
-            --mint-tint: #e2fbf7;
+            --mint: #13bd7e;
+            --mint-hover: #058759;
+            --mint-deep: #06a96c;
+            --mint-tint: rgba(19, 189, 126, 0.15);
             --danger: #dc2626;
             --danger-bg: #fdecec;
             --warning-bg: #fff9db;
@@ -83,7 +83,7 @@
         .app-header {
             position: sticky;
             top: 0;
-            background: var(--mint);
+            background: var(--mint-deep);
             border-bottom: 1px solid rgba(0, 0, 0, 0.08);
             z-index: 10;
         }
@@ -102,7 +102,7 @@
             font-weight: 700;
             letter-spacing: -0.4px;
             flex: 1;
-            color: var(--text);
+            color: #fff;
         }
 
         .btn-link {
@@ -111,7 +111,7 @@
             gap: 4px;
             background: none;
             border: none;
-            color: var(--text);
+            color: #fff;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
@@ -122,7 +122,11 @@
         }
 
         .btn-link:hover {
-            background: rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-link:focus-visible {
+            outline-color: #fff;
         }
 
         .lead {
@@ -196,9 +200,13 @@
             font-size: 13px;
         }
 
+        .reset-btn {
+            margin: 4px 0 16px;
+        }
+
         .btn-primary {
-            background: var(--mint);
-            color: var(--text);
+            background: var(--mint-deep);
+            color: #fff;
         }
 
         .btn-primary:hover:not(:disabled) {
@@ -584,8 +592,8 @@
         }
 
         .result-banner.pass {
-            background: var(--mint);
-            color: var(--text);
+            background: var(--mint-deep);
+            color: #fff;
         }
 
         .result-banner.fail {
@@ -664,8 +672,12 @@
         }
 
         .tab-btn.active {
-            background: var(--mint);
-            color: var(--text);
+            background: var(--mint-deep);
+            color: #fff;
+        }
+
+        .tab-btn.active:focus-visible {
+            outline-color: #fff;
         }
 
         .ox {
@@ -1111,7 +1123,7 @@
                     '<div class="stat-item"><span class="stat-num">' + s.stats.correct + '</span><span class="stat-label">맞은 수</span></div>' +
                     '<div class="stat-item"><span class="stat-num">' + fmt1(acc) + '%</span><span class="stat-label">정답률</span></div>' +
                     '</div>' +
-                    '<button type="button" class="btn btn-outline small" id="resetInfBtn">기록 초기화</button>' +
+                    '<button type="button" class="btn btn-outline small reset-btn" id="resetInfBtn">기록 초기화</button>' +
                     '<div class="card question-card">' +
                     '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 <span class="q-type">' + esc(q.type) + '</span></div>' +
                     '<div class="q-text">' + esc(q.question) + '</div>' +
