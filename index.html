@@ -317,6 +317,10 @@
             margin-bottom: 16px;
         }
 
+        .review-item.unanswered {
+            border-left: 3px solid var(--border-strong);
+        }
+
         .q-source {
             font-size: 13px;
             color: var(--text-muted);
@@ -917,6 +921,11 @@
         .ox-guess {
             background: var(--warning-bg);
             color: var(--warning-text);
+        }
+
+        .ox-unanswered {
+            background: var(--surface-sunken);
+            color: var(--text-muted);
         }
 
         .review-answers {
@@ -2175,7 +2184,9 @@
 
                 var reviewHtml = filteredDetails.map(function (d) {
                     var q = d.q;
-                    var oxHtml = d.correct ? '<span class="ox ox-correct">' + ICON_CHECK + ' 정답</span>' : '<span class="ox ox-wrong">' + ICON_X + ' 오답</span>';
+                    var isUnanswered = !(d.userAnswerText && d.userAnswerText.trim());
+                    var oxHtml = isUnanswered ? '<span class="ox ox-unanswered">미응답</span>'
+                        : (d.correct ? '<span class="ox ox-correct">' + ICON_CHECK + ' 정답</span>' : '<span class="ox ox-wrong">' + ICON_X + ' 오답</span>');
                     var guessHtml = s.guessed[d.id] ? '<span class="ox ox-guess">찍음</span>' : '';
                     var selfGradeHtml = '';
                     var answerHtml;
@@ -2205,7 +2216,7 @@
                             '<button type="button" class="btn btn-danger small ' + (sg === 'incorrect' ? 'active' : '') + '" data-sg="incorrect" data-qid="' + q.id + '">' + ICON_X + ' 오답으로 표시</button>' +
                             '</div></div>';
                     }
-                    return '<div class="card review-item">' +
+                    return '<div class="card review-item' + (isUnanswered ? ' unanswered' : '') + '">' +
                         '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 ' + oxHtml + guessHtml + '</div>' +
                         '<div class="q-text">' + esc(q.question) + '</div>' +
                         (q.reference ? '<div class="q-reference">' + renderRefMd(q.reference) + '</div>' : '') +
