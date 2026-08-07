@@ -1458,7 +1458,7 @@
             function renderInfiniteHub() {
                 var saved = loadState(KEY_INFINITE, null);
                 if (!state.infSubjectPick) state.infSubjectPick = saved ? saved.subjectFilter : 'all';
-                if (!state.infRoundPick) state.infRoundPick = (saved && saved.roundFilter !== 'all') ? saved.roundFilter.slice() : ROUNDS.slice();
+                if (!state.infRoundPick) state.infRoundPick = (saved && saved.roundFilter !== 'all') ? saved.roundFilter.slice() : ROUNDS.filter(function (r) { return r >= 44 && r <= 49; });
                 var subjectPick = state.infSubjectPick;
                 var roundPick = state.infRoundPick;
                 var canStart = roundPick.length > 0;
