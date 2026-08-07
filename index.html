@@ -17,6 +17,7 @@
         }
 
         :root {
+            color-scheme: light;
             --bg: #f5f6f7;
             --surface: #ffffff;
             --surface-sunken: #f0f2f5;
@@ -54,6 +55,13 @@
         button {
             font-family: inherit;
             color: var(--text);
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        button:disabled {
+            opacity: 1;
+            -webkit-text-fill-color: currentColor;
         }
 
         a {
@@ -126,8 +134,10 @@
             transition: background-color 160ms var(--ease);
         }
 
-        .btn-link:hover {
-            background: rgba(255, 255, 255, 0.15);
+        @media (hover:hover) and (pointer:fine) {
+            .btn-link:hover {
+                background: rgba(255, 255, 255, 0.15);
+            }
         }
 
         .btn-link:focus-visible {
@@ -160,9 +170,11 @@
             transition: border-color 160ms var(--ease), background-color 160ms var(--ease);
         }
 
-        .mode-card:hover {
-            border-color: var(--mint-deep);
-            background: var(--mint-tint);
+        @media (hover:hover) and (pointer:fine) {
+            .mode-card:hover {
+                border-color: var(--mint-deep);
+                background: var(--mint-tint);
+            }
         }
 
         .mode-card h2 {
@@ -214,8 +226,10 @@
             color: #fff;
         }
 
-        .btn-primary:hover:not(:disabled) {
-            background: var(--mint-hover);
+        @media (hover:hover) and (pointer:fine) {
+            .btn-primary:hover:not(:disabled) {
+                background: var(--mint-hover);
+            }
         }
 
         .btn-primary:disabled {
@@ -230,8 +244,10 @@
             border-color: var(--border-strong);
         }
 
-        .btn-outline:hover {
-            background: var(--bg);
+        @media (hover:hover) and (pointer:fine) {
+            .btn-outline:hover {
+                background: var(--bg);
+            }
         }
 
         .btn-outline:disabled {
@@ -270,9 +286,11 @@
             border-color: var(--border);
         }
 
-        .btn-danger-outline:hover {
-            background: var(--danger-bg);
-            border-color: var(--danger-bg);
+        @media (hover:hover) and (pointer:fine) {
+            .btn-danger-outline:hover {
+                background: var(--danger-bg);
+                border-color: var(--danger-bg);
+            }
         }
 
         .card {
@@ -332,8 +350,10 @@
             transition: border-color 160ms var(--ease), background-color 160ms var(--ease);
         }
 
-        .choice-btn:hover:not(:disabled) {
-            border-color: var(--border-strong);
+        @media (hover:hover) and (pointer:fine) {
+            .choice-btn:hover:not(:disabled) {
+                border-color: var(--border-strong);
+            }
         }
 
         .choice-num {
@@ -348,6 +368,39 @@
             font-size: 13px;
             font-weight: 700;
             transition: background-color 160ms var(--ease), color 160ms var(--ease);
+        }
+
+        .choice-num-col {
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .guess-tag {
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 1;
+            padding: 3px 6px;
+            border-radius: var(--radius-pill);
+            background: var(--surface-sunken);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        @media (hover:hover) and (pointer:fine) {
+            .guess-tag:hover {
+                border-color: var(--border-strong);
+            }
+        }
+
+        .guess-tag.active {
+            background: var(--warning-bg);
+            color: var(--warning-text);
+            border-color: var(--warning-bg);
         }
 
         .choice-text {
@@ -410,6 +463,8 @@
             font-family: inherit;
             resize: vertical;
             transition: border-color 160ms var(--ease);
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .text-answer:focus {
@@ -466,6 +521,17 @@
             text-align: center;
         }
 
+        .stat-item.clickable {
+            cursor: pointer;
+            border: 1.5px solid var(--border-strong);
+        }
+
+        @media (hover:hover) and (pointer:fine) {
+            .stat-item.clickable:hover {
+                border-color: var(--mint-deep);
+            }
+        }
+
         .stat-num {
             display: block;
             font-size: 22px;
@@ -485,6 +551,24 @@
         .action-row.two-col {
             display: flex;
             gap: 10px;
+        }
+
+        @media (max-width:600px) {
+            .exam-container {
+                padding-bottom: 92px;
+            }
+
+            .exam-container .action-row.two-col {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 20;
+                margin: 0;
+                padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+                background: var(--surface);
+                border-top: 1px solid var(--border);
+            }
         }
 
         .action-row.two-col .btn {
@@ -545,8 +629,10 @@
             transition: border-color 160ms var(--ease);
         }
 
-        .round-card:hover {
-            border-color: var(--border-strong);
+        @media (hover:hover) and (pointer:fine) {
+            .round-card:hover {
+                border-color: var(--border-strong);
+            }
         }
 
         .round-num {
@@ -705,6 +791,11 @@
             color: var(--danger);
         }
 
+        .ox-guess {
+            background: var(--warning-bg);
+            color: var(--warning-text);
+        }
+
         .review-answers {
             font-size: 14px;
             margin-bottom: 8px;
@@ -833,9 +924,10 @@
 
             var KEY_INFINITE = 'adsp:infinite';
             var KEY_MOCK = 'adsp:mock';
+            var KEY_WRONG = 'adsp:wrong';
             function KEY_ROUND(r) { return 'adsp:round:' + r; }
             function ALL_KEYS() {
-                var ks = [KEY_INFINITE, KEY_MOCK];
+                var ks = [KEY_INFINITE, KEY_MOCK, KEY_WRONG];
                 ROUNDS.forEach(function (r) { ks.push(KEY_ROUND(r)); });
                 return ks;
             }
@@ -985,6 +1077,11 @@
                 else if (state.screen === 'roundHub') renderRoundHub();
                 else if (state.screen === 'roundSolve') renderExamSolve('round');
                 else if (state.screen === 'roundResult') renderExamResult('round');
+                else if (state.screen === 'wrongList') renderWrongList();
+                else if (state.screen === 'wrongSolve') renderExamSolve('wrong');
+                else if (state.screen === 'wrongResult') renderExamResult('wrong');
+                else if (state.screen === 'infiniteList') renderInfiniteList();
+                else if (state.screen === 'infiniteSummary') renderInfiniteSummary();
             }
 
             /* ================= LOADING / ERROR ================= */
@@ -1041,6 +1138,10 @@
                     '<h2>회차별 문제 풀이</h2>' +
                     '<p>' + roundRange + ' 중 하나를 선택해 해당 회차 문제를 그대로 풀어봅니다.</p>' +
                     '</button>' +
+                    '<button type="button" class="mode-card" data-nav="wrongList">' +
+                    '<h2>틀린 문제 모아보기</h2>' +
+                    '<p>모의고사·회차별 풀이에서 채점 완료된 시험 중 틀린 문제만 모아 다시 확인합니다.</p>' +
+                    '</button>' +
                     '</div>' +
                     '<button type="button" class="btn btn-outline btn-danger-outline full" id="resetAllBtn">전체 기록 초기화</button>' +
                     '</main>';
@@ -1055,17 +1156,24 @@
             }
 
             /* ================= INFINITE MODE ================= */
-            function defaultInfiniteState() {
-                return { v: SCHEMA_V, stats: { solved: 0, correct: 0 }, pool: shuffle(poolQuestions.map(function (q) { return q.id; })), current: null };
+            function subjectPoolIds(subjectFilter) {
+                var qs = subjectFilter === 'all' ? poolQuestions : poolQuestions.filter(function (q) { return q.subject_no === subjectFilter; });
+                return qs.map(function (q) { return q.id; });
+            }
+            function defaultInfiniteState(subjectFilter) {
+                subjectFilter = subjectFilter || 'all';
+                return { v: SCHEMA_V, subjectFilter: subjectFilter, stats: { solved: 0, correct: 0 }, history: [], pool: shuffle(subjectPoolIds(subjectFilter)), current: null };
             }
             function getInfiniteState() {
                 var s = loadState(KEY_INFINITE, null);
                 if (!s) { s = defaultInfiniteState(); saveState(KEY_INFINITE, s); }
+                if (!s.subjectFilter) s.subjectFilter = 'all';
+                if (!s.history) s.history = [];
                 return s;
             }
             function drawNextInfinite(s) {
                 if (s.pool.length === 0) {
-                    s.pool = shuffle(poolQuestions.map(function (q) { return q.id; }));
+                    s.pool = shuffle(subjectPoolIds(s.subjectFilter));
                 }
                 var id = s.pool.pop();
                 var q = questionById[id];
@@ -1119,16 +1227,28 @@
                 }
 
                 var canCheck = q.type === '객관식' ? cur.selectedIndex !== null : cur.typed.trim().length > 0;
+                var subjectFilter = s.subjectFilter;
+                var wrongCount = s.stats.solved - s.stats.correct;
 
                 app.innerHTML =
                     headerHtml('무한 문제 풀이') +
                     '<main class="container">' +
+                    '<div class="filter-tabs">' +
+                    '<button type="button" class="tab-btn ' + (subjectFilter === 'all' ? 'active' : '') + '" data-subject="all">전체</button>' +
+                    '<button type="button" class="tab-btn ' + (subjectFilter === 1 ? 'active' : '') + '" data-subject="1">데이터 이해</button>' +
+                    '<button type="button" class="tab-btn ' + (subjectFilter === 2 ? 'active' : '') + '" data-subject="2">분석 기획</button>' +
+                    '<button type="button" class="tab-btn ' + (subjectFilter === 3 ? 'active' : '') + '" data-subject="3">데이터 분석</button>' +
+                    '</div>' +
                     '<div class="stat-bar">' +
                     '<div class="stat-item"><span class="stat-num">' + s.stats.solved + '</span><span class="stat-label">푼 문제 수</span></div>' +
-                    '<div class="stat-item"><span class="stat-num">' + s.stats.correct + '</span><span class="stat-label">맞은 수</span></div>' +
+                    '<div class="stat-item' + (s.stats.correct > 0 ? ' clickable" data-list="correct"' : '"') + '><span class="stat-num">' + s.stats.correct + '</span><span class="stat-label">맞은 수</span></div>' +
+                    '<div class="stat-item' + (wrongCount > 0 ? ' clickable" data-list="wrong"' : '"') + '><span class="stat-num">' + wrongCount + '</span><span class="stat-label">틀린 수</span></div>' +
                     '<div class="stat-item"><span class="stat-num">' + fmt1(acc) + '%</span><span class="stat-label">정답률</span></div>' +
                     '</div>' +
-                    '<button type="button" class="btn btn-outline small reset-btn" id="resetInfBtn">기록 초기화</button>' +
+                    '<div class="action-row two-col">' +
+                    '<button type="button" class="btn btn-outline small" id="resetInfBtn">기록 초기화</button>' +
+                    '<button type="button" class="btn btn-outline small" id="endInfBtn">종료</button>' +
+                    '</div>' +
                     '<div class="card question-card">' +
                     '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 <span class="q-type">' + esc(q.type) + '</span></div>' +
                     '<div class="q-text">' + esc(q.question) + '</div>' +
@@ -1145,9 +1265,22 @@
                 on('#homeBtn', 'click', function () { nav('home'); });
                 on('#resetInfBtn', 'click', function () {
                     confirmModal('무한 문제 풀이 통계와 진행 기록을 초기화합니다. 계속할까요?', function () {
-                        saveState(KEY_INFINITE, defaultInfiniteState());
+                        saveState(KEY_INFINITE, defaultInfiniteState(s.subjectFilter));
                         render();
                     });
+                });
+                on('#endInfBtn', 'click', function () { nav('infiniteSummary'); });
+                on('.tab-btn', 'click', function (e) {
+                    var val = e.currentTarget.getAttribute('data-subject');
+                    var newFilter = val === 'all' ? 'all' : parseInt(val, 10);
+                    if (newFilter === s.subjectFilter) return;
+                    confirmModal('과목을 변경하면 현재 무한 풀이 통계와 진행 기록이 초기화됩니다. 계속할까요?', function () {
+                        saveState(KEY_INFINITE, defaultInfiniteState(newFilter));
+                        render();
+                    });
+                });
+                on('.stat-item.clickable', 'click', function (e) {
+                    nav('infiniteList', { listFilter: e.currentTarget.getAttribute('data-list') });
                 });
 
                 if (q.type === '객관식') {
@@ -1177,6 +1310,7 @@
                         cur.graded = true;
                         s.stats.solved += 1;
                         if (isCorrect) s.stats.correct += 1;
+                        s.history.push({ id: cur.id, correct: isCorrect, answerText: val });
                     }
                     saveState(KEY_INFINITE, s);
                     render();
@@ -1185,6 +1319,7 @@
                     s.current = null;
                     saveState(KEY_INFINITE, s);
                     render();
+                    window.scrollTo(0, 0);
                 });
                 on('#gradeCorrect', 'click', function () {
                     if (cur.graded) return;
@@ -1192,6 +1327,7 @@
                     cur.graded = true;
                     s.stats.solved += 1;
                     s.stats.correct += 1;
+                    s.history.push({ id: cur.id, correct: true, answerText: cur.typed });
                     saveState(KEY_INFINITE, s);
                     render();
                 });
@@ -1200,8 +1336,104 @@
                     cur.selfGrade = 'incorrect';
                     cur.graded = true;
                     s.stats.solved += 1;
+                    s.history.push({ id: cur.id, correct: false, answerText: cur.typed });
                     saveState(KEY_INFINITE, s);
                     render();
+                });
+            }
+
+            function renderInfiniteList() {
+                var s = getInfiniteState();
+                var filter = state.listFilter === 'wrong' ? 'wrong' : 'correct';
+                var subjectNo = state.listSubject || null;
+                var items = s.history.filter(function (h) {
+                    if (subjectNo && questionById[h.id].subject_no !== subjectNo) return false;
+                    return filter === 'correct' ? h.correct : !h.correct;
+                }).slice().reverse();
+                if (items.length === 0) { nav(subjectNo ? 'infiniteSummary' : 'infinite'); return; }
+                var title = (subjectNo ? SUBJECT_NAMES[subjectNo] + ' · ' : '') + (filter === 'correct' ? '맞은 문제 목록' : '틀린 문제 목록');
+
+                var listHtml = items.map(function (h) {
+                    var q = questionById[h.id];
+                    var oxHtml = h.correct ? '<span class="ox ox-correct">' + ICON_CHECK + ' 정답</span>' : '<span class="ox ox-wrong">' + ICON_X + ' 오답</span>';
+                    var answerHtml;
+                    if (q.type === '객관식') {
+                        answerHtml = '<div class="choices review-choices">' + q.choices.map(function (val, i) {
+                            var cls = 'choice-btn';
+                            var tag = '';
+                            var isAnswer = q.answer.indexOf(val) !== -1;
+                            var isSelected = h.answerText === val;
+                            if (isAnswer) { cls += ' correct'; tag = '<span class="choice-tag">' + ICON_CHECK + ' 정답</span>'; }
+                            else if (isSelected) { cls += ' incorrect'; tag = '<span class="choice-tag">' + ICON_X + ' 오답</span>'; }
+                            return '<button type="button" class="' + cls + '" disabled>' +
+                                '<span class="choice-num">' + (i + 1) + '</span>' +
+                                '<span class="choice-text">' + esc(val) + '</span>' + tag +
+                                '</button>';
+                        }).join('') + '</div>';
+                    } else {
+                        answerHtml = '<div class="review-answers">' +
+                            '<div>내 답: ' + esc(h.answerText || '') + (h.answerText ? '' : '미응답') + '</div>' +
+                            '<div>정답: ' + esc(q.answer.join(' / ')) + '</div>' +
+                            '</div>';
+                    }
+                    return '<div class="card review-item">' +
+                        '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 ' + oxHtml + '</div>' +
+                        '<div class="q-text">' + esc(q.question) + '</div>' +
+                        answerHtml +
+                        '<div class="explanation-block">' + esc(q.explanation) + '</div>' +
+                        '</div>';
+                }).join('');
+
+                app.innerHTML = headerHtml(title) +
+                    '<main class="container">' +
+                    listHtml +
+                    '</main>';
+
+                on('#homeBtn', 'click', function () { nav('home'); });
+            }
+
+            function renderInfiniteSummary() {
+                var s = getInfiniteState();
+                var bySubj = { 1: { correct: 0, wrong: 0 }, 2: { correct: 0, wrong: 0 }, 3: { correct: 0, wrong: 0 } };
+                s.history.forEach(function (h) {
+                    var subjNo = questionById[h.id].subject_no;
+                    if (h.correct) bySubj[subjNo].correct += 1; else bySubj[subjNo].wrong += 1;
+                });
+
+                var subjectCardsHtml = [1, 2, 3].map(function (no) {
+                    var b = bySubj[no];
+                    var total = b.correct + b.wrong;
+                    return '<div class="card">' +
+                        '<div class="q-source">' + esc(SUBJECT_NAMES[no]) + '</div>' +
+                        '<div class="stat-bar">' +
+                        '<div class="stat-item' + (b.correct > 0 ? ' clickable" data-list="correct" data-subject="' + no + '"' : '"') + '><span class="stat-num">' + b.correct + '</span><span class="stat-label">맞은 수</span></div>' +
+                        '<div class="stat-item' + (b.wrong > 0 ? ' clickable" data-list="wrong" data-subject="' + no + '"' : '"') + '><span class="stat-num">' + b.wrong + '</span><span class="stat-label">틀린 수</span></div>' +
+                        '<div class="stat-item"><span class="stat-num">' + total + '</span><span class="stat-label">푼 문제</span></div>' +
+                        '</div>' +
+                        '</div>';
+                }).join('');
+
+                app.innerHTML = headerHtml('무한 문제 풀이 결과') +
+                    '<main class="container">' +
+                    '<p class="lead">과목별 결과입니다. 맞은 수/틀린 수를 눌러 문제 목록을 확인하세요.</p>' +
+                    subjectCardsHtml +
+                    '<button type="button" class="btn btn-primary full" id="continueInfBtn">계속 풀기</button>' +
+                    '<button type="button" class="btn btn-outline btn-danger-outline full" id="restartInfBtn">새로 시작</button>' +
+                    '</main>';
+
+                on('#homeBtn', 'click', function () { nav('home'); });
+                on('.stat-item.clickable', 'click', function (e) {
+                    nav('infiniteList', {
+                        listFilter: e.currentTarget.getAttribute('data-list'),
+                        listSubject: parseInt(e.currentTarget.getAttribute('data-subject'), 10)
+                    });
+                });
+                on('#continueInfBtn', 'click', function () { nav('infinite'); });
+                on('#restartInfBtn', 'click', function () {
+                    confirmModal('무한 문제 풀이 통계와 진행 기록을 초기화합니다. 계속할까요?', function () {
+                        saveState(KEY_INFINITE, defaultInfiniteState(s.subjectFilter));
+                        nav('infinite');
+                    });
                 });
             }
 
@@ -1230,6 +1462,7 @@
                     choiceOrder: buildChoiceOrders(ids),
                     answers: emptyMap(ids, null),
                     selfGrades: emptyMap(ids, null),
+                    guessed: emptyMap(ids, false),
                     submitted: false, currentIndex: 0
                 };
             }
@@ -1241,6 +1474,18 @@
                     choiceOrder: buildChoiceOrders(ids),
                     answers: emptyMap(ids, null),
                     selfGrades: emptyMap(ids, null),
+                    guessed: emptyMap(ids, false),
+                    submitted: false, currentIndex: 0
+                };
+            }
+            function createWrongSession(ids) {
+                return {
+                    v: SCHEMA_V, mode: 'wrong', round: null,
+                    questionIds: ids,
+                    choiceOrder: buildChoiceOrders(ids),
+                    answers: emptyMap(ids, null),
+                    selfGrades: emptyMap(ids, null),
+                    guessed: emptyMap(ids, false),
                     submitted: false, currentIndex: 0
                 };
             }
@@ -1284,6 +1529,23 @@
                 var anyFailing = subjectResults.some(function (r) { return r.failing; });
                 var pass = passTotal && !anyFailing;
                 return { details: details, subjectResults: subjectResults, totalCorrect: totalCorrect, totalCount: totalCount, scorePercent: scorePercent, pass: pass, anyFailing: anyFailing, ungraded: ungraded };
+            }
+
+            function collectWrongDetails() {
+                var map = {};
+                var mockS = loadState(KEY_MOCK, null);
+                if (mockS && mockS.submitted) {
+                    scoreExam(mockS).details.forEach(function (d) { if (!d.correct && !map[d.id]) map[d.id] = d; });
+                }
+                ROUNDS.forEach(function (r) {
+                    var s = loadState(KEY_ROUND(r), null);
+                    if (s && s.submitted) {
+                        scoreExam(s).details.forEach(function (d) { if (!d.correct && !map[d.id]) map[d.id] = d; });
+                    }
+                });
+                return Object.keys(map).map(function (id) { return map[id]; }).sort(function (a, b) {
+                    return a.q.round - b.q.round || a.q.globalNumber - b.q.globalNumber;
+                });
             }
 
             /* ---------- MOCK HUB ---------- */
@@ -1368,12 +1630,13 @@
             /* ---------- EXAM SOLVE (shared) ---------- */
             function renderExamSolve(mode) {
                 var round = mode === 'round' ? state.round : null;
-                var key = mode === 'mock' ? KEY_MOCK : KEY_ROUND(round);
+                var key = mode === 'mock' ? KEY_MOCK : (mode === 'round' ? KEY_ROUND(round) : KEY_WRONG);
                 var s = loadState(key, null);
                 if (!s) {
-                    s = mode === 'mock' ? createMockSession() : createRoundSession(round);
+                    s = mode === 'mock' ? createMockSession() : (mode === 'round' ? createRoundSession(round) : createWrongSession(collectWrongDetails().map(function (d) { return d.id; })));
                     saveState(key, s);
                 }
+                if (!s.guessed) s.guessed = emptyMap(s.questionIds, false);
                 var ids = s.questionIds;
                 var idx = Math.max(0, Math.min(s.currentIndex || 0, ids.length - 1));
                 s.currentIndex = idx;
@@ -1384,10 +1647,15 @@
                 if (q.type === '객관식') {
                     var order = s.choiceOrder[id];
                     var selIdx = s.answers[id];
+                    var isGuessed = !!s.guessed[id];
                     bodyHtml = order.map(function (val, i) {
                         var cls = 'choice-btn' + (selIdx === i ? ' selected' : '');
+                        var guessCls = 'guess-tag' + (isGuessed && selIdx === i ? ' active' : '');
                         return '<button type="button" class="' + cls + '" data-idx="' + i + '">' +
+                            '<span class="choice-num-col">' +
                             '<span class="choice-num">' + (i + 1) + '</span>' +
+                            '<span class="' + guessCls + '" data-guess-idx="' + i + '">찍기</span>' +
+                            '</span>' +
                             '<span class="choice-text">' + esc(val) + '</span>' +
                             '</button>';
                     }).join('');
@@ -1402,10 +1670,10 @@
                     return '<button type="button" class="' + cls + '" data-jump="' + i + '">' + (i + 1) + '</button>';
                 }).join('');
 
-                var title = mode === 'mock' ? '모의고사' : (round + '회 회차별 풀이');
+                var title = mode === 'mock' ? '모의고사' : (mode === 'round' ? (round + '회 회차별 풀이') : '틀린 문제 다시 풀기');
 
                 app.innerHTML = headerHtml(title) +
-                    '<main class="container">' +
+                    '<main class="container exam-container">' +
                     '<div class="progress-line">' + (idx + 1) + ' / ' + ids.length + '문항</div>' +
                     '<div class="card question-card">' +
                     '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 <span class="q-type">' + esc(q.type) + '</span></div>' +
@@ -1423,17 +1691,33 @@
                 saveState(key, s);
 
                 on('#homeBtn', 'click', function () { nav('home'); });
-                on('#prevBtn', 'click', function () { s.currentIndex = idx - 1; saveState(key, s); render(); });
-                on('#nextBtn', 'click', function () { s.currentIndex = idx + 1; saveState(key, s); render(); });
+                on('#prevBtn', 'click', function () { s.currentIndex = idx - 1; saveState(key, s); render(); window.scrollTo(0, 0); });
+                on('#nextBtn', 'click', function () { s.currentIndex = idx + 1; saveState(key, s); render(); window.scrollTo(0, 0); });
                 on('.qnav-btn', 'click', function (e) {
                     s.currentIndex = parseInt(e.currentTarget.getAttribute('data-jump'), 10);
                     saveState(key, s);
                     render();
+                    window.scrollTo(0, 0);
                 });
 
                 if (q.type === '객관식') {
                     on('.choice-btn', 'click', function (e) {
-                        s.answers[id] = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
+                        var clickedIdx = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
+                        s.answers[id] = s.answers[id] === clickedIdx ? null : clickedIdx;
+                        s.guessed[id] = false;
+                        saveState(key, s);
+                        render();
+                    });
+                    on('.guess-tag', 'click', function (e) {
+                        e.stopPropagation();
+                        var i = parseInt(e.currentTarget.getAttribute('data-guess-idx'), 10);
+                        if (s.answers[id] === i && s.guessed[id]) {
+                            s.answers[id] = null;
+                            s.guessed[id] = false;
+                        } else {
+                            s.answers[id] = i;
+                            s.guessed[id] = true;
+                        }
                         saveState(key, s);
                         render();
                     });
@@ -1461,7 +1745,7 @@
                         s.submitted = true;
                         s.submittedAt = Date.now();
                         saveState(key, s);
-                        nav(mode === 'mock' ? 'mockResult' : 'roundResult', mode === 'round' ? { round: round } : {});
+                        nav(mode === 'mock' ? 'mockResult' : (mode === 'round' ? 'roundResult' : 'wrongResult'), mode === 'round' ? { round: round } : {});
                     });
                 });
             }
@@ -1469,19 +1753,21 @@
             /* ---------- EXAM RESULT (shared) ---------- */
             function renderExamResult(mode) {
                 var round = mode === 'round' ? state.round : null;
-                var key = mode === 'mock' ? KEY_MOCK : KEY_ROUND(round);
+                var isWrongMode = mode === 'wrong';
+                var key = mode === 'mock' ? KEY_MOCK : (mode === 'round' ? KEY_ROUND(round) : KEY_WRONG);
                 var s = loadState(key, null);
                 if (!s || !s.submitted) {
-                    nav(mode === 'mock' ? 'mockHub' : 'roundHub');
+                    nav(mode === 'mock' ? 'mockHub' : (mode === 'round' ? 'roundHub' : 'wrongList'));
                     return;
                 }
+                if (!s.guessed) s.guessed = emptyMap(s.questionIds, false);
                 var filter = state.reviewFilter || 'all';
                 var result = scoreExam(s);
                 var failingNames = result.subjectResults.filter(function (r) { return r.failing; }).map(function (r) { return r.subject; });
 
-                var bannerHtml = result.pass
+                var bannerHtml = isWrongMode ? '' : (result.pass
                     ? '<div class="result-banner pass">' + ICON_CHECK + ' 합격</div>'
-                    : '<div class="result-banner fail">' + ICON_X + ' 불합격' + (failingNames.length ? ' — 과락 과목: ' + esc(failingNames.join(', ')) : '') + '</div>';
+                    : '<div class="result-banner fail">' + ICON_X + ' 불합격' + (failingNames.length ? ' — 과락 과목: ' + esc(failingNames.join(', ')) : '') + '</div>');
 
                 var ungradedNotice = result.ungraded > 0
                     ? '<div class="notice">자가채점이 필요한 서술형 문항이 ' + result.ungraded + '개 있습니다. 아래 문항 리뷰에서 정답/오답을 선택해주세요. 채점 후 점수가 갱신됩니다.</div>'
@@ -1490,40 +1776,59 @@
                     ? '<div class="notice">14회 24번은 시험범위 밖 출제로 전항 정답처리된 문항이라 제외되었습니다.</div>'
                     : '';
 
-                var subjectTableHtml = '<div class="table-wrap"><table class="subject-table"><thead><tr>' +
+                var subjectTableHtml = isWrongMode ? '' : ('<div class="table-wrap"><table class="subject-table"><thead><tr>' +
                     '<th>과목</th><th>맞은 수</th><th>총 문항</th><th>정답률</th><th>과락</th></tr></thead><tbody>' +
                     result.subjectResults.map(function (r) {
                         return '<tr class="' + (r.failing ? 'fail-row' : '') + '">' +
                             '<td>' + esc(r.subject) + '</td><td>' + r.correct + '</td><td>' + r.total + '</td>' +
                             '<td>' + fmt1(r.pct) + '%</td><td>' + (r.failing ? '과락' : '-') + '</td></tr>';
-                    }).join('') + '</tbody></table></div>';
+                    }).join('') + '</tbody></table></div>');
 
-                var filteredDetails = filter === 'wrong' ? result.details.filter(function (d) { return !d.correct; }) : result.details;
+                var filteredDetails = filter === 'wrong' ? result.details.filter(function (d) { return !d.correct; })
+                    : (filter === 'guess' ? result.details.filter(function (d) { return s.guessed[d.id]; }) : result.details);
 
                 var reviewHtml = filteredDetails.map(function (d) {
                     var q = d.q;
                     var oxHtml = d.correct ? '<span class="ox ox-correct">' + ICON_CHECK + ' 정답</span>' : '<span class="ox ox-wrong">' + ICON_X + ' 오답</span>';
+                    var guessHtml = s.guessed[d.id] ? '<span class="ox ox-guess">찍음</span>' : '';
                     var selfGradeHtml = '';
-                    if (q.type !== '객관식') {
+                    var answerHtml;
+                    if (q.type === '객관식') {
+                        var order = s.choiceOrder[q.id];
+                        var selIdx = s.answers[q.id];
+                        answerHtml = '<div class="choices review-choices">' + order.map(function (val, i) {
+                            var cls = 'choice-btn';
+                            var tag = '';
+                            var isAnswer = q.answer.indexOf(val) !== -1;
+                            var isSelected = selIdx === i;
+                            if (isAnswer) { cls += ' correct'; tag = '<span class="choice-tag">' + ICON_CHECK + ' 정답</span>'; }
+                            else if (isSelected) { cls += ' incorrect'; tag = '<span class="choice-tag">' + ICON_X + ' 오답</span>'; }
+                            return '<button type="button" class="' + cls + '" disabled>' +
+                                '<span class="choice-num">' + (i + 1) + '</span>' +
+                                '<span class="choice-text">' + esc(val) + '</span>' + tag +
+                                '</button>';
+                        }).join('') + '</div>';
+                    } else {
                         var sg = s.selfGrades[q.id];
+                        answerHtml = '<div class="review-answers">' +
+                            '<div>내 답: ' + esc(d.userAnswerText || '') + (d.userAnswerText ? '' : '미응답') + '</div>' +
+                            '<div>정답: ' + esc(q.answer.join(' / ')) + '</div>' +
+                            '</div>';
                         selfGradeHtml = '<div class="self-grade"><div class="self-grade-actions">' +
                             '<button type="button" class="btn btn-success small ' + (sg === 'correct' ? 'active' : '') + '" data-sg="correct" data-qid="' + q.id + '">' + ICON_CHECK + ' 정답으로 표시</button>' +
                             '<button type="button" class="btn btn-danger small ' + (sg === 'incorrect' ? 'active' : '') + '" data-sg="incorrect" data-qid="' + q.id + '">' + ICON_X + ' 오답으로 표시</button>' +
                             '</div></div>';
                     }
                     return '<div class="card review-item">' +
-                        '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 ' + oxHtml + '</div>' +
+                        '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번 ' + oxHtml + guessHtml + '</div>' +
                         '<div class="q-text">' + esc(q.question) + '</div>' +
-                        '<div class="review-answers">' +
-                        '<div>내 답: ' + esc(d.userAnswerText || '') + (d.userAnswerText ? '' : '미응답') + '</div>' +
-                        '<div>정답: ' + esc(q.answer.join(' / ')) + '</div>' +
-                        '</div>' +
+                        answerHtml +
                         '<div class="explanation-block">' + esc(q.explanation) + '</div>' +
                         selfGradeHtml +
                         '</div>';
                 }).join('');
 
-                var title = mode === 'mock' ? '모의고사 결과' : (round + '회 결과');
+                var title = mode === 'mock' ? '모의고사 결과' : (mode === 'round' ? (round + '회 결과') : '틀린 문제 다시 풀기 결과');
 
                 app.innerHTML = headerHtml(title) +
                     '<main class="container">' +
@@ -1535,6 +1840,7 @@
                     '<div class="filter-tabs">' +
                     '<button type="button" class="tab-btn ' + (filter === 'all' ? 'active' : '') + '" data-filter="all">전체 보기</button>' +
                     '<button type="button" class="tab-btn ' + (filter === 'wrong' ? 'active' : '') + '" data-filter="wrong">오답만 보기</button>' +
+                    '<button type="button" class="tab-btn ' + (filter === 'guess' ? 'active' : '') + '" data-filter="guess">찍은 문제만 보기</button>' +
                     '</div>' +
                     '<div class="review-list">' + (reviewHtml || '<p class="lead">해당하는 문항이 없습니다.</p>') + '</div>' +
                     '<button type="button" class="btn btn-primary full" id="retryBtn">다시 풀기</button>' +
@@ -1555,15 +1861,74 @@
                 on('#retryBtn', 'click', function () {
                     var msg = mode === 'mock'
                         ? '새 모의고사를 시작합니다. 현재 결과는 새 시험으로 대체됩니다. 계속할까요?'
-                        : (round + '회 문제를 다시 풉니다. 진행 기록이 초기화됩니다. 계속할까요?');
+                        : (mode === 'round' ? (round + '회 문제를 다시 풉니다. 진행 기록이 초기화됩니다. 계속할까요?')
+                            : '틀린 문제를 다시 풉니다. 최신 오답 목록으로 새로 시작합니다. 계속할까요?');
                     confirmModal(msg, function () {
                         if (mode === 'mock') {
                             saveState(KEY_MOCK, createMockSession());
                             nav('mockSolve');
-                        } else {
+                        } else if (mode === 'round') {
                             saveState(KEY_ROUND(round), createRoundSession(round));
                             nav('roundSolve', { round: round });
+                        } else {
+                            saveState(KEY_WRONG, createWrongSession(collectWrongDetails().map(function (d) { return d.id; })));
+                            nav('wrongSolve');
                         }
+                    });
+                });
+            }
+
+            /* ---------- WRONG LIST ---------- */
+            function renderWrongList() {
+                var details = collectWrongDetails();
+                var ids = details.map(function (d) { return d.id; });
+                var listHtml = details.length ? details.map(function (d) {
+                    var q = d.q;
+                    return '<div class="card review-item">' +
+                        '<div class="q-source">' + q.round + '회차 · ' + esc(q.subject) + ' · ' + q.globalNumber + '번</div>' +
+                        '<div class="q-text">' + esc(q.question) + '</div>' +
+                        '<div class="review-answers">' +
+                        '<div>내 답: ' + esc(d.userAnswerText || '') + (d.userAnswerText ? '' : '미응답') + '</div>' +
+                        '<div>정답: ' + esc(q.answer.join(' / ')) + '</div>' +
+                        '</div>' +
+                        '<div class="explanation-block">' + esc(q.explanation) + '</div>' +
+                        '</div>';
+                }).join('') : '<p class="lead">아직 틀린 문제가 없습니다. 모의고사 또는 회차별 풀이를 채점하면 여기에 표시됩니다.</p>';
+
+                var actionsHtml = '';
+                if (details.length > 0) {
+                    var wrongS = loadState(KEY_WRONG, null);
+                    if (!wrongS) {
+                        actionsHtml = '<button type="button" class="btn btn-primary full" id="startWrong">틀린 문제 다시 풀어보기</button>';
+                    } else if (!wrongS.submitted) {
+                        var answered = wrongS.questionIds.filter(function (id) { return isAnswered(wrongS.answers[id]); }).length;
+                        actionsHtml = '<p class="lead">진행 중인 다시 풀기가 있습니다. (' + answered + '/' + wrongS.questionIds.length + ' 응답)</p>' +
+                            '<button type="button" class="btn btn-primary full" id="resumeWrong">이어풀기</button>' +
+                            '<button type="button" class="btn btn-outline full" id="newWrong">새로 다시 풀기</button>';
+                    } else {
+                        actionsHtml = '<button type="button" class="btn btn-primary full" id="viewWrongResult">결과 보기</button>' +
+                            '<button type="button" class="btn btn-outline full" id="newWrong">새로 다시 풀기</button>';
+                    }
+                }
+
+                app.innerHTML = headerHtml('틀린 문제 모아보기') +
+                    '<main class="container">' +
+                    '<p class="lead">채점 완료된 모의고사·회차별 풀이 중 틀린 문제 ' + details.length + '개입니다.</p>' +
+                    actionsHtml +
+                    listHtml +
+                    '</main>';
+
+                on('#homeBtn', 'click', function () { nav('home'); });
+                on('#startWrong', 'click', function () {
+                    saveState(KEY_WRONG, createWrongSession(ids));
+                    nav('wrongSolve');
+                });
+                on('#resumeWrong', 'click', function () { nav('wrongSolve'); });
+                on('#viewWrongResult', 'click', function () { nav('wrongResult'); });
+                on('#newWrong', 'click', function () {
+                    confirmModal('기존 다시 풀기 진행 데이터를 덮어씁니다. 계속할까요?', function () {
+                        saveState(KEY_WRONG, createWrongSession(ids));
+                        nav('wrongSolve');
                     });
                 });
             }
