@@ -1434,7 +1434,7 @@
             function defaultInfiniteState(subjectFilter, roundFilter) {
                 subjectFilter = subjectFilter || 'all';
                 roundFilter = roundFilter || 'all';
-                return { v: SCHEMA_V, subjectFilter: subjectFilter, roundFilter: roundFilter, stats: { solved: 0, correct: 0 }, history: [], pool: shuffle(subjectPoolIds(subjectFilter, roundFilter)), current: null };
+                return { v: SCHEMA_V, subjectFilter: subjectFilter, roundFilter: roundFilter, stats: { solved: 0, correct: 0 }, history: [], pool: shuffle(subjectPoolIds(subjectFilter, roundFilter)), current: null, startedAt: Date.now() };
             }
             function getInfiniteState() {
                 var s = loadState(KEY_INFINITE, null);
@@ -1442,6 +1442,7 @@
                 if (!s.subjectFilter) s.subjectFilter = 'all';
                 if (!s.roundFilter) s.roundFilter = 'all';
                 if (!s.history) s.history = [];
+                if (!s.startedAt) s.startedAt = Date.now();
                 return s;
             }
             function drawNextInfinite(s) {
@@ -1581,6 +1582,7 @@
                     '<main class="container">' +
                     '<div class="round-toggle-header"><span>' + subjectLabel + ' · ' + roundFilterLabel + '</span>' +
                     '<button type="button" class="btn-link" id="changeInfSettingsBtn">설정 변경</button></div>' +
+                    '<div class="progress-line">경과 시간 · <span id="examTimer">' + fmtDuration(Date.now() - s.startedAt) + '</span></div>' +
                     '<div class="stat-bar">' +
                     '<div class="stat-item"><span class="stat-num">' + s.stats.solved + '</span><span class="stat-label">푼 문제 수</span></div>' +
                     '<div class="stat-item' + (s.stats.correct > 0 ? ' clickable" data-list="correct"' : '"') + '><span class="stat-num">' + s.stats.correct + '</span><span class="stat-label">맞은 수</span></div>' +
@@ -1604,6 +1606,11 @@
                         : '<button type="button" class="btn btn-primary full" id="nextBtn" ' + (cur.graded ? '' : 'disabled') + '>다음 문제</button>') +
                     '</div>' +
                     '</main>';
+
+                examTimerHandle = setInterval(function () {
+                    var el = document.getElementById('examTimer');
+                    if (el) el.textContent = fmtDuration(Date.now() - s.startedAt);
+                }, 1000);
 
                 on('#homeBtn', 'click', function () { nav('home'); });
                 on('#backBtn', 'click', function () { navBack(); });
