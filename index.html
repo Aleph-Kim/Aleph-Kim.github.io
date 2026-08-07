@@ -748,6 +748,42 @@
             }
         }
 
+        .round-toggle-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 4px;
+        }
+
+        .round-toggle-header span {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .round-toggle-header .btn-link {
+            color: var(--mint-deep);
+            font-size: 13px;
+            padding: 4px 6px;
+            margin: -4px -6px;
+        }
+
+        @media (hover:hover) and (pointer:fine) {
+            .round-toggle-header .btn-link:hover {
+                background: var(--mint-tint);
+            }
+        }
+
+        .round-card.selected {
+            border-color: var(--mint-deep);
+            background: var(--mint-tint);
+        }
+
+        .round-card.selected .round-status {
+            color: var(--mint-deep);
+            font-weight: 700;
+        }
+
         .result-banner {
             display: flex;
             align-items: center;
@@ -1653,13 +1689,16 @@
                 ids.forEach(function (id) { m[id] = val; });
                 return m;
             }
-            function createMockSession() {
+            function createMockSession(rounds) {
+                var useRounds = rounds && rounds.length ? rounds : ROUNDS;
+                var pool = poolQuestions.filter(function (q) { return useRounds.indexOf(q.round) !== -1; });
                 var bySubj = { 1: [], 2: [], 3: [] };
-                poolQuestions.forEach(function (q) { bySubj[q.subject_no].push(q.id); });
+                pool.forEach(function (q) { bySubj[q.subject_no].push(q.id); });
                 function pick(arr, n) { return shuffle(arr).slice(0, n); }
                 var ids = pick(bySubj[1], 10).concat(pick(bySubj[2], 10), pick(bySubj[3], 30));
                 return {
                     v: SCHEMA_V, mode: 'mock', round: null,
+                    rounds: useRounds.slice(),
                     questionIds: ids,
                     choiceOrder: buildChoiceOrders(ids),
                     answers: emptyMap(ids, null),
@@ -1764,34 +1803,59 @@
             /* ---------- MOCK HUB ---------- */
             function renderMockHub() {
                 var s = loadState(KEY_MOCK, null);
-                var statusHtml = '<p class="lead">전체 ' + ROUNDS.length + '회차에서 과목별로 무작위 추출한 50문항 모의고사입니다.</p>';
+                if (!state.mockRounds) state.mockRounds = ROUNDS.slice();
+                var selRounds = state.mockRounds;
+                var canStart = selRounds.length > 0;
+
+                var pickerHtml = '<div class="round-toggle-header"><span>출제 회차 선택</span>' +
+                    '<button type="button" class="btn-link" id="toggleAllRoundsBtn">' + (selRounds.length === ROUNDS.length ? '전체 해제' : '전체 선택') + '</button></div>' +
+                    '<div class="round-grid">' + ROUNDS.map(function (r) {
+                        var active = selRounds.indexOf(r) !== -1;
+                        return '<button type="button" class="round-card round-pick' + (active ? ' selected' : '') + '" data-round="' + r + '">' +
+                            '<div class="round-num">' + r + '회</div>' +
+                            '<div class="round-status">' + (active ? '선택됨' : '미선택') + '</div>' +
+                            '</button>';
+                    }).join('') + '</div>';
+
+                var statusHtml = '<p class="lead">선택한 회차에서 과목별로 무작위 추출한 50문항 모의고사입니다.</p>';
+                if (!canStart) statusHtml += '<div class="notice">회차를 1개 이상 선택해주세요.</div>';
                 var actionsHtml = '';
                 if (!s) {
-                    actionsHtml = '<button type="button" class="btn btn-primary full" id="startMock">모의고사 시작</button>';
+                    actionsHtml = '<button type="button" class="btn btn-primary full" id="startMock" ' + (canStart ? '' : 'disabled') + '>모의고사 시작</button>';
                 } else if (!s.submitted) {
                     var answered = s.questionIds.filter(function (id) { return isAnswered(s.answers[id]); }).length;
-                    statusHtml += '<p>진행 중인 모의고사가 있습니다. (' + answered + '/' + s.questionIds.length + ' 응답)</p>';
+                    statusHtml += '<p>진행 중인 모의고사가 있습니다. (' + answered + '/' + s.questionIds.length + ' 응답 · ' + (s.rounds ? s.rounds.length : ROUNDS.length) + '개 회차)</p>';
                     actionsHtml = '<button type="button" class="btn btn-primary full" id="resumeMock">이어풀기</button>' +
-                        '<button type="button" class="btn btn-outline full" id="newMock">새 모의고사 시작</button>';
+                        '<button type="button" class="btn btn-outline full" id="newMock" ' + (canStart ? '' : 'disabled') + '>새 모의고사 시작</button>';
                 } else {
                     var result = scoreExam(s);
-                    statusHtml += '<p>완료된 모의고사가 있습니다. 총점 ' + fmt1(result.scorePercent) + '점 · ' + (result.pass ? '합격' : '불합격') + '</p>';
+                    statusHtml += '<p>완료된 모의고사가 있습니다. 총점 ' + fmt1(result.scorePercent) + '점 · ' + (result.pass ? '합격' : '불합격') + ' · ' + (s.rounds ? s.rounds.length : ROUNDS.length) + '개 회차</p>';
                     actionsHtml = '<button type="button" class="btn btn-primary full" id="viewMockResult">결과 보기</button>' +
-                        '<button type="button" class="btn btn-outline full" id="newMock">새 모의고사 시작</button>';
+                        '<button type="button" class="btn btn-outline full" id="newMock" ' + (canStart ? '' : 'disabled') + '>새 모의고사 시작</button>';
                 }
-                app.innerHTML = headerHtml('모의고사') + '<main class="container">' + statusHtml + actionsHtml + '</main>';
+                app.innerHTML = headerHtml('모의고사') + '<main class="container">' + pickerHtml + statusHtml + actionsHtml + '</main>';
 
                 on('#homeBtn', 'click', function () { nav('home'); });
                 on('#backBtn', 'click', function () { navBack(); });
+                on('.round-pick', 'click', function (e) {
+                    var r = parseInt(e.currentTarget.getAttribute('data-round'), 10);
+                    var idx = state.mockRounds.indexOf(r);
+                    if (idx === -1) state.mockRounds.push(r); else state.mockRounds.splice(idx, 1);
+                    render();
+                });
+                on('#toggleAllRoundsBtn', 'click', function () {
+                    state.mockRounds = state.mockRounds.length === ROUNDS.length ? [] : ROUNDS.slice();
+                    render();
+                });
                 on('#startMock', 'click', function () {
-                    saveState(KEY_MOCK, createMockSession());
+                    saveState(KEY_MOCK, createMockSession(state.mockRounds));
                     nav('mockSolve');
                 });
                 on('#resumeMock', 'click', function () { nav('mockSolve'); });
                 on('#viewMockResult', 'click', function () { nav('mockResult'); });
                 on('#newMock', 'click', function () {
                     confirmModal('기존 모의고사 진행 데이터를 덮어씁니다. 새 모의고사를 시작할까요?', function () {
-                        saveState(KEY_MOCK, createMockSession());
+                        saveState(KEY_MOCK, createMockSession(state.mockRounds));
                         nav('mockSolve');
                     });
                 });
@@ -2084,7 +2148,7 @@
                             : '틀린 문제를 다시 풉니다. 최신 오답 목록으로 새로 시작합니다. 계속할까요?');
                     confirmModal(msg, function () {
                         if (mode === 'mock') {
-                            saveState(KEY_MOCK, createMockSession());
+                            saveState(KEY_MOCK, createMockSession(s.rounds));
                             nav('mockSolve');
                         } else if (mode === 'round') {
                             saveState(KEY_ROUND(round), createRoundSession(round));
